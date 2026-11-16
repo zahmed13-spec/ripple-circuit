@@ -1,0 +1,1498 @@
+[
+  {
+    "id": 1,
+    "version": 1,
+    "title": "First Pulse",
+    "difficulty": "Tutorial",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 210,
+        "y": 360,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 530,
+        "y": 360,
+        "radius": 30
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 1,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 165,
+        "y": 360
+      }
+    ],
+    "hint": "Tap the glowing hint behind the orb. Push it into target 1."
+  },
+  {
+    "id": 2,
+    "version": 1,
+    "title": "Redirect",
+    "difficulty": "Tutorial",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 210,
+        "y": 470,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 590,
+        "y": 116,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 350,
+        "y": 270,
+        "w": 45,
+        "h": 190
+      }
+    ],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 2,
+    "timeLimit": 45,
+    "parPulses": 2,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 210,
+        "y": 520
+      },
+      {
+        "tick": 75,
+        "x": 165,
+        "y": 190
+      }
+    ],
+    "hint": "Go above the wall, then tap below-left of the moving orb to redirect it."
+  },
+  {
+    "id": 3,
+    "version": 1,
+    "title": "Multiple Orbs",
+    "difficulty": "Tutorial",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 300,
+        "y": 300,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 1,
+        "x": 300,
+        "y": 420,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#ffbf69",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 428,
+        "y": 182,
+        "radius": 27
+      },
+      {
+        "orbId": 1,
+        "x": 428,
+        "y": 538,
+        "radius": 27
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 1,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 235,
+        "y": 360
+      }
+    ],
+    "hint": "Tap between and behind both orbs. One ripple can move them both."
+  },
+  {
+    "id": 4,
+    "version": 1,
+    "title": "Long Distance",
+    "difficulty": "Flow",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 160,
+        "y": 230,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 444,
+        "y": 474,
+        "radius": 27
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 1,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 125,
+        "y": 200
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "version": 1,
+    "title": "Diagonal Thinking",
+    "difficulty": "Flow",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 184,
+        "y": 295,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 435,
+        "y": 91,
+        "radius": 27
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 1,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 141,
+        "y": 330
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "version": 1,
+    "title": "Cross Current",
+    "difficulty": "Flow",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 208,
+        "y": 360,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 470,
+        "y": 514,
+        "radius": 27
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 1,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 157,
+        "y": 330
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "version": 1,
+    "title": "Narrow Passage",
+    "difficulty": "Flow",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 232,
+        "y": 425,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 235,
+        "y": 439,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 340,
+        "y": 110,
+        "w": 30,
+        "h": 250
+      }
+    ],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 1,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 173,
+        "y": 460
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "version": 1,
+    "title": "Second Wind",
+    "difficulty": "Flow",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 180,
+        "y": 520,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 589,
+        "y": 166,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 330,
+        "y": 300,
+        "w": 45,
+        "h": 240
+      }
+    ],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 2,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 180,
+        "y": 570
+      },
+      {
+        "tick": 75,
+        "x": 140,
+        "y": 240
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "version": 1,
+    "title": "Corner Turn",
+    "difficulty": "Momentum",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 200,
+        "y": 180,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 526,
+        "y": 589,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 180,
+        "y": 330,
+        "w": 240,
+        "h": 45
+      }
+    ],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 2,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 145,
+        "y": 180
+      },
+      {
+        "tick": 80,
+        "x": 465.75,
+        "y": 140
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "version": 1,
+    "title": "Thread the Needle",
+    "difficulty": "Momentum",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 540,
+        "y": 200,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 131,
+        "y": 501,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 345,
+        "y": 180,
+        "w": 45,
+        "h": 240
+      }
+    ],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 2,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 540,
+        "y": 140
+      },
+      {
+        "tick": 85,
+        "x": 580,
+        "y": 450.5
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "version": 1,
+    "title": "Twin Lanes",
+    "difficulty": "Momentum",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 520,
+        "y": 540,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 244,
+        "y": 131,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 300,
+        "y": 345,
+        "w": 240,
+        "h": 45
+      }
+    ],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 2,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 585,
+        "y": 540
+      },
+      {
+        "tick": 90,
+        "x": 285.25,
+        "y": 580
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "version": 1,
+    "title": "Return to Sender",
+    "difficulty": "Momentum",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 540,
+        "y": 190,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 441,
+        "y": 190,
+        "radius": 27
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 2,
+    "timeLimit": 45,
+    "parPulses": 1,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 515,
+        "y": 190
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "version": 1,
+    "title": "Bank Shot",
+    "difficulty": "Momentum",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 540,
+        "y": 285,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 554,
+        "y": 36,
+        "radius": 27
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 2,
+    "timeLimit": 45,
+    "parPulses": 1,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 515,
+        "y": 305
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "version": 1,
+    "title": "Northbound",
+    "difficulty": "Momentum",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 540,
+        "y": 380,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 441,
+        "y": 380,
+        "radius": 27
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 2,
+    "timeLimit": 45,
+    "parPulses": 1,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 515,
+        "y": 380
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "version": 1,
+    "title": "Double Back",
+    "difficulty": "Momentum",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 540,
+        "y": 475,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 553,
+        "y": 189,
+        "radius": 27
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 2,
+    "timeLimit": 45,
+    "parPulses": 1,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 515,
+        "y": 495
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "version": 1,
+    "title": "Butterfly",
+    "difficulty": "Momentum",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 240,
+        "y": 230,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 1,
+        "x": 240,
+        "y": 490,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#ffbf69",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 620,
+        "y": 230,
+        "radius": 27
+      },
+      {
+        "orbId": 1,
+        "x": 593,
+        "y": 490,
+        "radius": 27
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 2,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 195,
+        "y": 230
+      },
+      {
+        "tick": 25,
+        "x": 190,
+        "y": 490
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "version": 1,
+    "title": "Parallel Lines",
+    "difficulty": "Circuit",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 480,
+        "y": 490,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 1,
+        "x": 480,
+        "y": 230,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#ffbf69",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 100,
+        "y": 490,
+        "radius": 27
+      },
+      {
+        "orbId": 1,
+        "x": 127,
+        "y": 230,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 315,
+        "y": 320,
+        "w": 55,
+        "h": 80
+      }
+    ],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 2,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 525,
+        "y": 490
+      },
+      {
+        "tick": 25,
+        "x": 530,
+        "y": 230
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "version": 1,
+    "title": "Three Wishes",
+    "difficulty": "Circuit",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 240,
+        "y": 230,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 1,
+        "x": 240,
+        "y": 490,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#ffbf69",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 2,
+        "x": 470,
+        "y": 360,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#b6a0ff",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 620,
+        "y": 230,
+        "radius": 27
+      },
+      {
+        "orbId": 1,
+        "x": 541,
+        "y": 541,
+        "radius": 27
+      },
+      {
+        "orbId": 2,
+        "x": 470,
+        "y": 44,
+        "radius": 27
+      }
+    ],
+    "obstacles": [],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 3,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 195,
+        "y": 230
+      },
+      {
+        "tick": 25,
+        "x": 190,
+        "y": 490
+      },
+      {
+        "tick": 50,
+        "x": 470,
+        "y": 405
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "version": 1,
+    "title": "Crossroads",
+    "difficulty": "Circuit",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 490,
+        "y": 240,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 1,
+        "x": 230,
+        "y": 240,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#ffbf69",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 2,
+        "x": 360,
+        "y": 470,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#b6a0ff",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 490,
+        "y": 620,
+        "radius": 27
+      },
+      {
+        "orbId": 1,
+        "x": 179,
+        "y": 541,
+        "radius": 27
+      },
+      {
+        "orbId": 2,
+        "x": 676,
+        "y": 470,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 320,
+        "y": 350,
+        "w": 80,
+        "h": 55
+      }
+    ],
+    "bumpers": [],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 3,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 490,
+        "y": 195
+      },
+      {
+        "tick": 25,
+        "x": 230,
+        "y": 190
+      },
+      {
+        "tick": 50,
+        "x": 315,
+        "y": 470
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "version": 1,
+    "title": "Bumper Theory",
+    "difficulty": "Circuit",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 200,
+        "y": 300,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 293,
+        "y": 302,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 120,
+        "y": 540,
+        "w": 400,
+        "h": 28
+      }
+    ],
+    "bumpers": [
+      {
+        "x": 390,
+        "y": 335,
+        "radius": 38
+      }
+    ],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 2,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 165,
+        "y": 300
+      },
+      {
+        "tick": 80,
+        "x": 309,
+        "y": 135.75
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "version": 1,
+    "title": "Pinball",
+    "difficulty": "Circuit",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 200,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 36,
+        "y": 120,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 120,
+        "y": 540,
+        "w": 400,
+        "h": 28
+      }
+    ],
+    "bumpers": [
+      {
+        "x": 390,
+        "y": 360,
+        "radius": 38
+      }
+    ],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 2,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 165,
+        "y": 350
+      },
+      {
+        "tick": 80,
+        "x": 114.75,
+        "y": 316.5
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "version": 1,
+    "title": "The Divide",
+    "difficulty": "Circuit",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 200,
+        "y": 400,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 62,
+        "y": 216,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 120,
+        "y": 540,
+        "w": 400,
+        "h": 28
+      }
+    ],
+    "bumpers": [
+      {
+        "x": 390,
+        "y": 385,
+        "radius": 38
+      }
+    ],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 2,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 165,
+        "y": 400
+      },
+      {
+        "tick": 80,
+        "x": 137.5,
+        "y": 572.5
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "version": 1,
+    "title": "Chain Reaction",
+    "difficulty": "Circuit",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 220,
+        "y": 320,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 1,
+        "x": 280,
+        "y": 360,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#ffbf69",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 2,
+        "x": 340,
+        "y": 400,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#b6a0ff",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 403,
+        "y": 339,
+        "radius": 27
+      },
+      {
+        "orbId": 1,
+        "x": 289,
+        "y": 126,
+        "radius": 27
+      },
+      {
+        "orbId": 2,
+        "x": 582,
+        "y": 339,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 350,
+        "y": 520,
+        "w": 240,
+        "h": 25
+      }
+    ],
+    "bumpers": [
+      {
+        "x": 480,
+        "y": 300,
+        "radius": 35
+      }
+    ],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 3,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 185,
+        "y": 305
+      },
+      {
+        "tick": 70,
+        "x": 295.75,
+        "y": 501.5
+      },
+      {
+        "tick": 140,
+        "x": 500.75,
+        "y": 523.25
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "version": 1,
+    "title": "Convergence",
+    "difficulty": "Circuit",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 220,
+        "y": 320,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 1,
+        "x": 280,
+        "y": 360,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#ffbf69",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 2,
+        "x": 340,
+        "y": 400,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#b6a0ff",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 403,
+        "y": 339,
+        "radius": 27
+      },
+      {
+        "orbId": 1,
+        "x": 289,
+        "y": 126,
+        "radius": 27
+      },
+      {
+        "orbId": 2,
+        "x": 623,
+        "y": 313,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 350,
+        "y": 520,
+        "w": 240,
+        "h": 25
+      }
+    ],
+    "bumpers": [
+      {
+        "x": 480,
+        "y": 300,
+        "radius": 35
+      }
+    ],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 3,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 185,
+        "y": 305
+      },
+      {
+        "tick": 70,
+        "x": 295.75,
+        "y": 501.5
+      },
+      {
+        "tick": 140,
+        "x": 500.75,
+        "y": 533.25
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "version": 1,
+    "title": "Final Circuit",
+    "difficulty": "Circuit",
+    "orbs": [
+      {
+        "id": 0,
+        "x": 220,
+        "y": 320,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#67f0cf",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 1,
+        "x": 280,
+        "y": 360,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#ffbf69",
+        "state": "active",
+        "collision": 0
+      },
+      {
+        "id": 2,
+        "x": 340,
+        "y": 400,
+        "vx": 0,
+        "vy": 0,
+        "radius": 16,
+        "mass": 1,
+        "color": "#b6a0ff",
+        "state": "active",
+        "collision": 0
+      }
+    ],
+    "goals": [
+      {
+        "orbId": 0,
+        "x": 403,
+        "y": 339,
+        "radius": 27
+      },
+      {
+        "orbId": 1,
+        "x": 289,
+        "y": 126,
+        "radius": 27
+      },
+      {
+        "orbId": 2,
+        "x": 661,
+        "y": 307,
+        "radius": 27
+      }
+    ],
+    "obstacles": [
+      {
+        "x": 350,
+        "y": 520,
+        "w": 240,
+        "h": 25
+      }
+    ],
+    "bumpers": [
+      {
+        "x": 480,
+        "y": 300,
+        "radius": 35
+      }
+    ],
+    "hazards": [],
+    "pulseLimit": 3,
+    "timeLimit": 45,
+    "parPulses": 3,
+    "solution": [
+      {
+        "tick": 0,
+        "x": 185,
+        "y": 305
+      },
+      {
+        "tick": 70,
+        "x": 295.75,
+        "y": 501.5
+      },
+      {
+        "tick": 140,
+        "x": 500.75,
+        "y": 543.25
+      }
+    ]
+  }
+]

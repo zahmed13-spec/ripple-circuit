@@ -1,0 +1,6 @@
+import { beforeAll, it, expect } from 'vitest';
+import { fresh, load, persist, record, better } from '../src/services/storage';
+beforeAll(()=>{globalThis.matchMedia=(()=>({matches:false})) as unknown as typeof matchMedia;});
+it('ranks pulses before ticks',()=>{expect(better({pulses:1,ticks:500,stars:3},{pulses:2,ticks:50,stars:2})).toBe(true);expect(better({pulses:2,ticks:10,stars:3},{pulses:1,ticks:100,stars:3})).toBe(false);});
+it('preserves records, unlocks, settings, daily history through reload',()=>{const s=fresh(),score={pulses:1,ticks:100,stars:3};record(s,'c1-1',score,1);record(s,'d1-2026-11-15',score);record(s,'c1-1',{...score,ticks:200},1);let text='';expect(persist(s,{setItem:(_k,v)=>{text=v;}})).toBe(true);expect(load({getItem:()=>text})).toEqual(s);expect(s.unlocked).toBe(2);expect(s.best['c1-1'].ticks).toBe(100);});
+it('handles unavailable, corrupt and hostile storage',()=>{expect(load({getItem:()=>'{'})).toEqual(fresh());expect(persist(fresh(),{setItem:()=>{throw Error('denied');}})).toBe(false);expect(load({getItem:()=>{throw Error('denied');}})).toEqual(fresh());const s=load({getItem:()=>JSON.stringify({version:1,unlocked:999,settings:{sound:'yes'},best:{'c1-1':{pulses:-1,ticks:1,stars:3}}})});expect(s.unlocked).toBe(25);expect(s.best).toEqual({});expect(s.settings.sound).toBe(true);});

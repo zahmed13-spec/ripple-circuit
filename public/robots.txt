@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://zahmed13-spec.github.io/ripple-circuit/sitemap.xml
