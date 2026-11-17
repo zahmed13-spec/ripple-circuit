@@ -1,3 +1,7 @@
+# Current release
+
+See [RELEASE-2.0.md](RELEASE-2.0.md) for fresh 2.0 validation. The report below is historical evidence for the initial release, not a claim that those commands were rerun unchanged.
+
 # Validation report
 
 Executed November 15, 2026 on this macOS development machine with Node 24.22.1.

@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "errors": [],
+  "fullscreen": true,
+  "worker": "http://127.0.0.1:5173/ripple-circuit/sw.js",
+  "checks": [
+    "base-path assets",
+    "real switch completion",
+    "legacy offline completion",
+    "hash/query refresh",
+    "service-worker scope",
+    "result PNG download",
+    "fullscreen entry/exit"
+  ]
+}

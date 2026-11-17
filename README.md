@@ -1,3 +1,23 @@
+# Ripple Circuit 2.0
+
+The GitHub Pages game now has a separately versioned 12-puzzle campaign, pressure switches and gates, force arrows, optional drag/release Precision Aim, relaxed Puzzle Flow and separately scored Pulse Sprint. Original c1/d1 links and records remain supported.
+
+Read [RELEASE-2.0.md](RELEASE-2.0.md) for current validation and limitations, [LEVEL-DESIGN.md](LEVEL-DESIGN.md) for authored puzzle decisions, and [PLAYTEST-PLAN.md](PLAYTEST-PLAN.md) for the unperformed human study. The older sections below document the original 1.0 baseline and are retained as history.
+
+## Develop and validate 2.0
+
+Use Node 24 and pnpm 11.25: `pnpm install --frozen-lockfile`, `pnpm dev`, `pnpm test`, `pnpm run build`. For browser tests, run `pnpm exec playwright install chromium firefox webkit`, serve the production build with `pnpm preview -- --port 5173`, and run `pnpm test:browser`. npm script equivalents work with a normal npm installation, but npm does not use the supplied pnpm lockfile.
+
+For GitHub Pages build with `BASE_PATH=/ripple-circuit/ pnpm run build`. The CI workflow builds this subpath automatically. Test at the subpath before merging. Local default root builds are for the browser suite.
+
+Identifiers: c1/d1 use preserved physics v1; c2 uses v2 Puzzle Flow; s2 uses v2 with a 45-second Sprint limit; d2 uses the frozen 15-entry daily pool with Sprint rules. Never mutate a published catalog under the same code. Records remain in the existing local-storage key; new progress uses an additive unlocked2 field.
+
+Precision aim does not pause time or change force. Drag outside the board, press Escape, cancel, rotate or lose the pointer to abandon the input. Quick tap remains immediate. Flow has no gameplay timeout; bounded shared replay verification supports up to one hour of simulation and inputs before 59m15s, rather than accepting arbitrarily expensive payloads.
+
+No new runtime dependencies. No analytics transmitted. Session-only playtest events can be voluntarily exported from Feedback. No global scores, accounts, or fictitious activity.
+
+---
+
 # GitHub development and publishing
 
 Run `npm install` and `npm run dev` for local development. Push changes to `main` to test, build and deploy to GitHub Pages automatically. Pull requests run tests and build without deploying. In Settings → Pages, select GitHub Actions as the source.
@@ -95,7 +115,7 @@ Important limitations:
 - `src/services/`: persistence/scoring, challenge encoding/recalculation and synthesized audio.
 - `tests/`: unit/content tests and browser interaction tests.
 - `vite.config.ts`: production build and versioned offline-worker emission.
-- `SPECIFICATION.md`: original requirements source, preserved in full.
+- The original requirements attachment was not published in this repository; the private original project retains it.
 
 ## Deploy
 
@@ -103,6 +123,6 @@ Upload the contents of `dist/` to any static HTTPS host at the domain root. Keep
 
 Before moving to another domain, update the canonical/OG URLs in `index.html`, plus `public/robots.txt` and `public/sitemap.xml`, then rebuild. Hash navigation and query challenge codes work without server-side route rewrites. HTTPS (or localhost) is needed for service workers and reliable sharing/clipboard support.
 
-The included `.openai/hosting.json` identifies this delivery's private Sites project. Remove that file when independently hosting or creating a separate project; do not overwrite its project identity to update an unrelated Site.
+This public repository contains no Sites project configuration. GitHub Pages is the authoritative release.
 
 Next priorities: observe ten first-time players without coaching; fix clarity/difficulty issues; test physical iPhone/Android devices and slow hardware; then decide whether trusted online rankings justify backend complexity.
