@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "title": "The First Ripple",
+    "par": 1,
+    "ticks": 68,
+    "offset4WorldUnits": "8/8",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 3
+  },
+  {
+    "id": 2,
+    "title": "Distance Matters",
+    "par": 1,
+    "ticks": 67,
+    "offset4WorldUnits": "8/8",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 4
+  },
+  {
+    "id": 3,
+    "title": "Around the Corner",
+    "par": 2,
+    "ticks": 427,
+    "offset4WorldUnits": "10/16",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 0
+  },
+  {
+    "id": 4,
+    "title": "Timing Changes Everything",
+    "par": 2,
+    "ticks": 185,
+    "offset4WorldUnits": "9/16",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 0
+  },
+  {
+    "id": 5,
+    "title": "Two With One",
+    "par": 1,
+    "ticks": 74,
+    "offset4WorldUnits": "8/8",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 1
+  },
+  {
+    "id": 6,
+    "title": "The Narrow Passage",
+    "par": 1,
+    "ticks": 70,
+    "offset4WorldUnits": "8/8",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 3
+  },
+  {
+    "id": 7,
+    "title": "The Bank Shot",
+    "par": 1,
+    "ticks": 113,
+    "offset4WorldUnits": "7/8",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 0
+  },
+  {
+    "id": 8,
+    "title": "Pressure Point",
+    "par": 1,
+    "ticks": 69,
+    "offset4WorldUnits": "8/8",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 2
+  },
+  {
+    "id": 9,
+    "title": "Open the Gate",
+    "par": 3,
+    "ticks": 788,
+    "offset4WorldUnits": "10/24",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 0
+  },
+  {
+    "id": 10,
+    "title": "Split Decision",
+    "par": 2,
+    "ticks": 159,
+    "offset4WorldUnits": "16/16",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 0
+  },
+  {
+    "id": 11,
+    "title": "Precision Cascade",
+    "par": 1,
+    "ticks": 53,
+    "offset4WorldUnits": "6/8",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 1
+  },
+  {
+    "id": 12,
+    "title": "The Living Circuit",
+    "par": 3,
+    "ticks": 271,
+    "offset4WorldUnits": "16/24",
+    "timingOffsets": "4/4",
+    "coarseOnePulseWins": 0
+  }
+]

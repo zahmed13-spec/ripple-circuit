@@ -24,6 +24,20 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm run build
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - name: Browser and offline tests
+        run: |
+          pnpm exec vite preview --host 127.0.0.1 --port 5173 --strictPort &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:5173/ >/dev/null && break; sleep 1; done
+          pnpm test:browser
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-failures
+          path: test-results
+      - run: pnpm run build
         env:
           BASE_PATH: /ripple-circuit/
       - uses: actions/upload-pages-artifact@v3

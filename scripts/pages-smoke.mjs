@@ -1,0 +1,18 @@
+import {chromium} from '@playwright/test';
+import {mkdirSync,writeFileSync} from 'node:fs';
+const evidence='../ripple-2-evidence';mkdirSync(evidence,{recursive:true});
+const browser=await chromium.launch();const context=await browser.newContext({viewport:{width:1366,height:900}}),page=await context.newPage();
+const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
+const root='http://127.0.0.1:5173/ripple-circuit/';await page.goto(root);
+if(!await page.locator('.arena-top h2').getByText('The First Ripple').isVisible())throw Error('Wrong home');
+await page.locator('#arena').press('Enter');await page.getByText('CIRCUIT COMPLETE',{exact:true}).waitFor();
+await page.locator('#result-share').click();const downloaded=page.waitForEvent('download');await page.locator('#image').click();await(await downloaded).saveAs(evidence+'/share-card.png');await page.getByLabel('Close dialog').click();
+await page.goto(root+'?c=c2-8#play');await page.screenshot({path:evidence+'/gate-desktop.png',fullPage:true});
+const r=await page.locator('#arena').boundingBox();await page.locator('#arena').click({position:{x:114.75/720*r.width,y:r.height/2}});await page.getByText('CIRCUIT COMPLETE',{exact:true}).waitFor();
+await page.locator('#retry').click();await page.locator('#fullscreen').click();await page.waitForFunction(()=>!!document.fullscreenElement);const fullscreen=await page.evaluate(()=>!!document.fullscreenElement);if(!fullscreen)throw Error('Chromium fullscreen did not enter');await page.evaluate(()=>document.exitFullscreen());
+await page.evaluate(async()=>{await navigator.serviceWorker.ready;if(!navigator.serviceWorker.controller)await new Promise(r=>navigator.serviceWorker.addEventListener('controllerchange',r,{once:true}));});
+const worker=await page.evaluate(()=>navigator.serviceWorker.controller.scriptURL);if(!worker.endsWith('/ripple-circuit/sw.js'))throw Error('Bad worker scope');
+await context.setOffline(true);await page.reload();await page.locator('#arena').waitFor();await page.goto(root+'?c=c1-1#play');await page.locator('#arena').press('Enter');await page.getByText('CIRCUIT COMPLETE',{exact:true}).waitFor();await context.setOffline(false);
+await page.goto(root+'?c=c2-12#play');await page.setViewportSize({width:390,height:844});await page.screenshot({path:evidence+'/finale-phone.png',fullPage:true});
+await page.goto(root+'#levels');await page.screenshot({path:evidence+'/map-phone.png',fullPage:true});
+const result={passed:errors.length===0,errors,fullscreen,worker,checks:['base-path assets','real switch completion','legacy offline completion','hash/query refresh','service-worker scope','result PNG download','fullscreen entry/exit']};writeFileSync('pages-smoke.json',JSON.stringify(result,null,2)+'\n');console.log(result);await browser.close();if(errors.length)throw Error(errors.join('\n'));

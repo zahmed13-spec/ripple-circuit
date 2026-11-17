@@ -1,0 +1,29 @@
+{
+  "environment": {
+    "browser": "159.0.8154.6",
+    "viewport": "1366x768",
+    "host": "macOS local loopback; no throttling",
+    "samples": 180,
+    "restarts": 100
+  },
+  "navigation": {
+    "responseEndMs": 6.199999988079071,
+    "domContentLoadedMs": 49.19999998807907,
+    "loadMs": 54
+  },
+  "idle": {
+    "medianMs": 16.699999999999818,
+    "p95Ms": 16.799999999999955,
+    "maxMs": 16.800000000000182
+  },
+  "active": {
+    "medianMs": 16.699999999999818,
+    "p95Ms": 16.700000000000728,
+    "maxMs": 16.800000000000182
+  },
+  "inputRoundTripMs": 175.33604200000036,
+  "retryRoundTripMedianMs": 33.28004200000032,
+  "heapBefore": 10000000,
+  "heapAfter": 10000000,
+  "limitations": "Automation round trips include Playwright overhead. Heap is nonstandard approximate and not a leak proof. No physical mobile, low-end or real-network measurement."
+}
