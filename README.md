@@ -1,3 +1,21 @@
+# Ripple Circuit 3D
+
+Actual Three.js arenas for every classic circuit, plus a separate twelve-level Rapier campaign with gravity, ramps, bridges, falls and mechanisms. Play the public [game](https://zahmed13-spec.github.io/ripple-circuit/) or [spatial campaign](https://zahmed13-spec.github.io/ripple-circuit/#depth).
+
+Read [RELEASE-3D.md](RELEASE-3D.md) for architecture, compatibility, validation and honest limitations. The 2.0 material below is retained as release history.
+
+## Develop 3D
+
+Use Node 24 and pnpm 11.25. Run `pnpm install --frozen-lockfile`, `pnpm dev`, `pnpm test`, and `pnpm run build`. Serve the production build with `pnpm preview -- --port 5173`; then run `pnpm test:browser` after `pnpm exec playwright install chromium firefox webkit`. For Pages: `BASE_PATH=/ripple-circuit/ pnpm run build`.
+
+Spatial routes: `#depth` campaign, `?c=c3-1#spatial` first tutorial, `#daily3` spatial daily. Existing `#daily` and classic URLs retain their rules. Choose a surface before keyboard aiming on raised geometry. Arrows move the aim in world X/Z; Enter/Space pulses; Escape cancels or pauses; R retries. Precision aim sends a pulse on release. Camera view and graphics controls are below the arena.
+
+Classic puzzles fall back to playable Canvas2D if WebGL2 is unavailable. Native spatial circuits honestly require WebGL2. Rapier is downloaded only when native content is opened (the offline worker also pre-caches it after first load). No runtime CDN, backend, paid API or account is required.
+
+The native daily repeats twelve curated entries. Classic d2 keeps its fifteen-entry schedule. Both use UTC and local personal records. Never change released geometry or physics under the same challenge version.
+
+---
+
 # Ripple Circuit 2.0
 
 The GitHub Pages game now has a separately versioned 12-puzzle campaign, pressure switches and gates, force arrows, optional drag/release Precision Aim, relaxed Puzzle Flow and separately scored Pulse Sprint. Original c1/d1 links and records remain supported.

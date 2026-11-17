@@ -1,0 +1,120 @@
+{
+  "environment": {
+    "browser": "159.0.8154.6",
+    "viewport": "1366x900",
+    "platform": "darwin",
+    "network": "local loopback, no throttling",
+    "samples": 180,
+    "retries": 100,
+    "levelChanges": 20,
+    "architecture": "arm64"
+  },
+  "loaded": {
+    "loadMs": 54.89999997615814,
+    "readyObservedMs": 1487.2999999523163,
+    "heap": 17100000
+  },
+  "active": {
+    "medianMs": 16.700000000000728,
+    "p95Ms": 33.40000000000009,
+    "maxMs": 49.90000000000009
+  },
+  "idle": {
+    "medianMs": 16.699999999999818,
+    "p95Ms": 33.30000000000018,
+    "maxMs": 33.400000000001455
+  },
+  "retryRoundTripMedianMs": 35.392415999998775,
+  "rendererResourcesBefore": {
+    "geometries": 27,
+    "textures": 11
+  },
+  "rendererResourcesAfter": {
+    "geometries": 27,
+    "textures": 11
+  },
+  "levelResources": [
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    },
+    {
+      "geometries": 27,
+      "textures": 11
+    }
+  ],
+  "heapAfter": 17100000,
+  "limitations": "Headless desktop measurement. Not a physical-phone, GPU-driver allocation or mobile network benchmark. Retry timing includes browser automation. Coarse JS heap and per-renderer counters cannot establish absence of every leak."
+}
