@@ -40,6 +40,15 @@ jobs:
       - run: pnpm run build
         env:
           BASE_PATH: /ripple-circuit/
+      - name: Verify the actual Pages subpath
+        env:
+          BASE_PATH: /ripple-circuit/
+        run: |
+          pnpm exec vite preview --host 127.0.0.1 --port 5173 --strictPort &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:5173/ripple-circuit/ >/dev/null && break; sleep 1; done
+          node scripts/pages-smoke.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

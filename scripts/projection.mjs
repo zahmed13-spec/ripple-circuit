@@ -1,0 +1,2 @@
+// Project authored legacy coordinates through the actual camera for browser probes.
+export async function projectClassic(page,x,y){const canvas=page.locator('#arena');await canvas.scrollIntoViewIfNeeded();const r=await canvas.boundingBox(),raw=await canvas.getAttribute('data-projection');if(!raw)return {x:x/720*r.width,y:y/720*r.height};const m=JSON.parse(raw),px=(x-360)/60,pz=(y-360)/60,w=m[3]*px+m[11]*pz+m[15];return {x:((m[0]*px+m[8]*pz+m[12])/w+1)*r.width/2,y:(1-(m[1]*px+m[9]*pz+m[13])/w)*r.height/2};}
