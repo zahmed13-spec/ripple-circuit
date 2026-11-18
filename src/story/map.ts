@@ -2,6 +2,7 @@ import { aero, chapters, storyLink } from "./chapters";
 import { available, completed, persistStory, presentation, restored, type StorySave } from "./save";
 import { themes } from "./themes";
 import { archiveEntries, milestones } from "./narrative";
+import { aftermath, films } from "./film/boards";
 
 const levelNames = ["A New Ripple", "The Flowing Path", "Beneath the Surface", "Reconnect the Stream", "Guardian of the Aqueduct"];
 export function worldMap(main: HTMLElement, story: StorySave) {
@@ -60,10 +61,11 @@ export function archive(main:HTMLElement, story:StorySave, storage?:Storage) {
   main.innerHTML=`<section class="story-page living-archive">
     <a href="#story-aero" class="story-back">← Aero Haven</a><h1>The Current Archive</h1>
     <p>Luma keeps a record of what the aqueduct reveals. Each new connection adds an entry.</p>
-    <div class="archive-cards">${entries.length?entries.map((entry,i)=>`<article>
+    <a href="#story-intro">Replay opening film →</a><div class="archive-cards">${entries.length?entries.map((entry,i)=>`<article>
       <span class="archive-symbol ${entry.icon}" aria-hidden="true"></span>
       <div><small>Aero Haven · Circuit 1-${i+1}</small><h2>${entry.clue}</h2><p>${entry.fragment}</p>
-      ${i===0?'<a href="#story-intro">Replay opening</a>':i===4?'<a href="#story-eco">Replay Eco signal</a>':""}</div></article>`).join("")
+      <div class="archive-film-links"><a href="#${aftermath[i]}">Watch ${films[aftermath[i]].title} →</a>
+      ${i===4?'<a href="#story-eco">Replay Eco preview</a>':""}</div></div></article>`).join("")
       :'<p>Complete A New Ripple to record the first discovery.</p>'}</div>
     <details class="living-preferences"><summary>Story presentation settings</summary>
     <label><input type="checkbox" data-story-option="music" ${options.music?"checked":""}> Music and ambience</label>

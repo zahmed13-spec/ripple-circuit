@@ -1,6 +1,6 @@
 import { aero, isStoryId, type StoryId } from "./chapters";
 
-import { sceneIds } from "./narrative";
+import { sceneIds } from "./film/boards";
 
 export const STORY_KEY = "ripple-circuit-story-v1";
 export type StoryResult = { pulses: number; ticks: number; stars: number };
