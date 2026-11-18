@@ -15,21 +15,8 @@ import {
 } from "./physics";
 import { nativeLevels, resolve3, daily3 } from "./levels";
 import { record, type Save, persist } from "../services/storage";
-import { motif, sound } from "../services/audio";
-import type { StoryLevel } from "../story/levels";
-import type { WorldTheme } from "../story/themes";
-import type { StoryResult } from "../story/save";
-
-type StoryPlay = {
-  level: StoryLevel;
-  theme: WorldTheme;
-  isRestored(): boolean;
-  record(result: StoryResult): boolean;
-  best(): StoryResult | undefined;
-  next(): string;
-  canContinue(): boolean;
-  nextLabel: string;
-};
+import { sound } from "../services/audio";
+import { StoryFeedback, type StoryPlay } from "../story/play-feedback";
 
 export async function mountNative(
   main: HTMLElement,
@@ -64,7 +51,7 @@ export async function mountNative(
     referenceInputs = l.solution;
   const daily = code.startsWith("d");
   main.className = story ? "native-game story-game" : "native-game";
-  main.innerHTML = `<section class="native-layout"><aside class="intro"><div class="eyebrow">${daily ? "TODAY’S SPATIAL CIRCUIT" : l.chapter}</div><h1>${l.title}</h1><p>${l.hint}</p>${story ? `<div class="story-guide"><span aria-hidden="true">✦</span><p>${story.level.narrative}</p></div><a href="#story-aero" class="textlink">← Aero Haven chapter</a><p id="story-mechanisms" class="small"></p>` : '<p class="small">Real gravity · 3D shockwaves · Local records</p><a href="#depth" class="textlink">Explore the floating islands →</a><p><a href="#daily">Classic Daily</a> · <a href="#daily3">3D Daily</a></p>'}<p id="native-countdown"></p></aside><section class="play-section"><div class="arena-top"><div><span class="eyebrow">${story ? `1-${l.id} · THE FRACTURED RIPPLE` : `${code} · PHYSICS 3`}</span><h2>${l.title}</h2></div><span class="difficulty">${l.chapter}</span></div><div class="hud"><div><span>PULSES LEFT</span><strong id="native-pulses"></strong></div><div><span>HOME</span><strong id="native-goals"></strong></div><div><span>TIME</span><strong id="native-time"></strong></div><div class="tools"><button id="native-pause" aria-label="Pause">Ⅱ</button><button id="native-retry" aria-label="Retry">↻</button></div></div><div class="arena-wrap"><canvas id="native-arena" tabindex="0" role="application" aria-label="3D circuit. Arrows aim on the selected surface, Enter pulses, Escape cancels or pauses, R retries."></canvas><div id="native-result" class="result" hidden aria-live="polite"></div></div><div id="native-controls"></div><div class="surface-control"><label>Aim surface <select id="surface"><option value="auto">Visible surface</option>${l.blocks
+  main.innerHTML = `<section class="native-layout"><aside class="intro"><div class="eyebrow">${daily ? "TODAY’S SPATIAL CIRCUIT" : l.chapter}</div><h1>${l.title}</h1><p>${l.hint}</p>${story ? `<div class="story-guide"><span class="luma-face" aria-hidden="true"></span><div><strong>Luma</strong><p aria-live="polite"></p></div></div><p class="story-restore-status" id="story-restore-status"></p><a href="#story-aero" class="textlink">← Aero Haven chapter</a><p id="story-mechanisms" class="small"></p>${l.id===5?'<a class="textlink" href="#story-survey">Survey the aqueduct</a>':""}` : '<p class="small">Real gravity · 3D shockwaves · Local records</p><a href="#depth" class="textlink">Explore the floating islands →</a><p><a href="#daily">Classic Daily</a> · <a href="#daily3">3D Daily</a></p>'}<p id="native-countdown"></p></aside><section class="play-section"><div class="arena-top"><div><span class="eyebrow">${story ? `1-${l.id} · THE FRACTURED RIPPLE` : `${code} · PHYSICS 3`}</span><h2>${l.title}</h2></div><span class="difficulty">${l.chapter}</span></div><div class="hud"><div><span>PULSES LEFT</span><strong id="native-pulses"></strong></div><div><span>HOME</span><strong id="native-goals"></strong></div><div><span>TIME</span><strong id="native-time"></strong></div><div class="tools"><button id="native-pause" aria-label="Pause">Ⅱ</button><button id="native-retry" aria-label="Retry">↻</button></div></div><div class="arena-wrap"><canvas id="native-arena" tabindex="0" role="application" aria-label="3D circuit. Arrows aim on the selected surface, Enter pulses, Escape cancels or pauses, R retries."></canvas><div id="native-result" class="result" hidden aria-live="polite"></div></div><div id="native-controls"></div><div class="surface-control"><label>Aim surface <select id="surface"><option value="auto">Visible surface</option>${l.blocks
     .filter((b) => !b.kind)
     .map(
       (b) =>
@@ -81,7 +68,7 @@ export async function mountNative(
   try {
     scene = new Arena3D(canvas, {
       ...l,native:true,
-      story:story && {theme:story.theme,currents:l.currents,restored:story.isRestored()},
+      story:story && {theme:story.theme,currents:l.currents,stage:story.stage()},
     });
   } catch {
     sim.dispose();
@@ -89,6 +76,8 @@ export async function mountNative(
       '<section class="page"><h1>3D graphics unavailable</h1><p>Spatial circuits need WebGL2. The classic campaigns still work with the Canvas fallback.</p><a class="primary" href="#play">Play classic circuits</a></section>';
     return { dispose() {}, pause() {} };
   }
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const feedback = story ? new StoryFeedback(story,scene,main,()=>save.settings.sound) : undefined;
   const cancel = () => {
     pointer = null;
     aim = null;
@@ -133,6 +122,7 @@ export async function mountNative(
     $("native-pause").textContent = "Ⅱ";
     $("native-instruction").textContent = l!.hint;
     scene.update(sim.orbs, [], []);
+    feedback?.reset();
     hud();
   }
   function pause() {
@@ -157,6 +147,7 @@ export async function mountNative(
     if (!aim || playback || scene.lost) return;
     if (sim.pulse(aim.point, aim.surface)) {
       scene.pulse(new Vector3(aim.point.x, aim.point.y, aim.point.z), true);
+      feedback?.pulse(new Vector3(aim.point.x,aim.point.y,aim.point.z));
       sound("pulse", save.settings.sound);
       hud();
     }
@@ -360,13 +351,9 @@ export async function mountNative(
           stars:sim.used <= l!.solution.length ? 3 : sim.used === l!.solution.length+1 ? 2 : 1,
         };
         if (story) {
-          const wasRestored = story.isRestored();
-          newBest = story.record(score);
-          if (!wasRestored && story.isRestored()) {
-            scene.story?.restore(true);
-            motif(story.theme.notes,save.settings.sound);
-            scene.pulse(new Vector3(0,2.2,-7.4),true);
-          }
+          const previousStage=story.stage();
+          newBest=story.record(score);
+          feedback?.finish(true,story.stage()>previousStage);
         } else {
           newBest = record(save,code,score,code.startsWith("c3") ? l!.id : undefined);
           if (!persist(save, storage))
@@ -374,9 +361,10 @@ export async function mountNative(
         }
       } else notify("Replay did not verify. No record saved.");
     }
+    if(!playback&&sim.status==="lost")feedback?.finish(false,false);
     sound(sim.status === "won" ? "win" : "lost", save.settings.sound);
     result.hidden = false;
-    result.innerHTML = `<div class="result-card"><div class="eyebrow">${playback ? "REFERENCE REPLAY" : sim.status === "won" ? "CIRCUIT COMPLETE" : "TRY ANOTHER ANGLE"}</div><h2>${sim.status === "won" ? "Beautifully connected." : "A little less force?"}</h2><p>${sim.status === "won" ? `${sim.used} pulses · ${(sim.tick / 60).toFixed(2)}s` : sim.reason}</p>${verified ? "<p>" + "★".repeat(sim.used <= l!.solution.length ? 3 : sim.used === l!.solution.length + 1 ? 2 : 1) + (newBest ? " · New personal best" : "") + "</p>" : ""}<button id="native-again" class="primary">Retry circuit</button>${sim.status === "won" && (!story || story.canContinue()) ? `<button id="native-next" class="secondary">${story?.nextLabel ?? "Next circuit →"}</button>` : ""}${verified ? '<button id="native-image">Download result image</button><button id="native-run">Watch your replay</button>' : ""}</div>`;
+    result.innerHTML = `<div class="result-card"><div class="eyebrow">${playback ? "REFERENCE REPLAY" : sim.status === "won" ? "CIRCUIT COMPLETE" : "TRY ANOTHER ANGLE"}</div><h2>${sim.status === "won" ? "Beautifully connected." : "A little less force?"}</h2><p>${sim.status === "won" ? `${sim.used} pulses · ${(sim.tick / 60).toFixed(2)}s` : sim.reason}</p>${verified ? "<p>" + "★".repeat(sim.used <= l!.solution.length ? 3 : sim.used === l!.solution.length + 1 ? 2 : 1) + (newBest ? " · New personal best" : "") + "</p>" : ""}<button id="native-again" class="primary">Retry circuit</button>${sim.status === "won" && (!story || story.canContinue()) ? `<button id="native-next" class="secondary">${story?.nextLabel() ?? "Next circuit →"}</button>` : ""}${verified ? '<button id="native-image">Download result image</button><button id="native-run">Watch your replay</button>' : ""}</div>`;
     $("native-again").onclick = reset;
     if ($("native-next"))
       $("native-next").onclick = () => {
@@ -425,6 +413,7 @@ export async function mountNative(
     if (dead) return;
     const dt = last ? Math.min((time - last) / 1000, 0.1) : 0;
     last = time;
+    feedback?.setActive(!document.hidden&&!sim.paused&&!scene.lost&&!document.querySelector("dialog[open]"));
     if (!document.hidden && !scene.lost) {
       if (!sim.paused && !document.querySelector("dialog[open]")) {
         acc += dt;
@@ -438,6 +427,7 @@ export async function mountNative(
                 scene.pulse(new Vector3(p.x, p.y, p.z), true);
             }
           sim.step();
+          if(!playback&&sim.started)feedback?.observe(sim);
           if (sim.tick === 30)
             canvas.dataset.checkpoint = JSON.stringify(summary(sim));
           for (const event of sim.events) sound(event, save.settings.sound);
@@ -448,7 +438,7 @@ export async function mountNative(
       scene.update(sim.orbs, sim.opened, sim.activated);
       scene.draw(
         dt,
-        save.settings.reduced,
+        save.settings.reduced || (story!==undefined && reducedMotion.matches),
         !sim.started || sim.paused || sim.status !== "playing",
       );
       hud();
@@ -493,6 +483,7 @@ export async function mountNative(
       window.removeEventListener("resize", resize);
       window.removeEventListener("keydown", key);
       document.removeEventListener("visibilitychange", hidden);
+      feedback?.dispose();
       sim.dispose();
       scene.dispose();
     },
