@@ -1,3 +1,9 @@
+# Ripple Circuit 5.0 — The Animated Story
+
+Eight original cel-shaded story films with a Blender cast, timed subtitles, and verified puzzle unlocks. [Play Story Mode](https://zahmed13-spec.github.io/ripple-circuit/#story) · [Release notes](RELEASE-5.0.md) · [Editable animation pipeline](cinematics/README.md)
+
+---
+
 # Ripple Circuit 4.5 — The Living World
 
 Progressively restore Aero Haven across the five published 3D puzzles. Visit the Current Archive, replay the new cinematics, and unlock a 3D preview of Eco Canopy. [Play Story Mode](https://zahmed13-spec.github.io/ripple-circuit/#story) · [4.5 release notes](RELEASE-4.5.md)

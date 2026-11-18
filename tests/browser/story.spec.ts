@@ -1,5 +1,6 @@
 import {test,expect, type Page} from "./fixtures";
 import {worldPoint} from "./points";
+import {aftermath,films} from "../../src/story/film/boards";
 import {storyLevels} from "../../src/story/levels";
 
 test("story map handles invalid and locked routes and an opening can be skipped",async({page})=>{
@@ -13,9 +14,9 @@ test("story map handles invalid and locked routes and an opening can be skipped"
   await expect(page.getByText("Future region · Locked")).toHaveCount(4);
   await page.getByRole("link",{name:"Enter Aero Haven"}).press("Enter");
   await page.getByRole("link",{name:"Begin story"}).press("Enter");
-  await expect(page.getByText(/Before the silence, every island/)).toBeVisible();
-  await page.getByRole("button",{name:"Continue",exact:true}).press("Enter");
-  await expect(page.getByText(/aqueduct went quiet/)).toBeVisible();
+  await expect(page.locator("#film-line").filter({hasText:/Before the silence, every island/})).toBeVisible();
+  await page.getByRole("button",{name:"Next shot",exact:true}).press("Enter");
+  await expect(page.locator("#film-line").filter({hasText:/aqueduct went quiet/})).toBeVisible();
   await page.getByRole("button",{name:"Skip scene"}).press("Enter");
   await expect(page).toHaveURL(/st4-aero-1#story-play$/);
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem("ripple-circuit-story-v1")!).viewed)).toEqual(["first-spark"]);
@@ -74,20 +75,28 @@ test("five live story wins unlock Eco, persist restoration, and preserve legacy 
       await page.screenshot({path:info.outputPath("aero-restored.jpg"),fullPage:true});
     }
     await page.locator("#native-next").press("Enter");
+    await expect(page.getByRole("heading",{name:films[aftermath[level.id-1]].title,exact:true})).toBeVisible();
+    if(level.id<5) {
+      await page.locator("#story-scene-skip").press("Enter");
+      if(level.id===4){
+        await expect(page.getByRole("heading",{name:"Guardian of the Aqueduct",exact:true})).toBeVisible();
+        await page.locator("#story-scene-skip").press("Enter");
+      }
+    }
   }
-  const shot=page.locator(".story-shot canvas");
+  const shot=page.locator(".film-frame canvas");
   await expect(shot).toHaveAttribute("data-restored","false");
-  await page.getByRole("button",{name:"Continue",exact:true}).press("Enter");
+  await page.getByRole("button",{name:"Next shot",exact:true}).press("Enter");
   await expect(shot).toHaveAttribute("data-restored","true");
   await page.getByRole("button",{name:"Skip scene"}).press("Enter");
   await expect(page.getByText("Chapter 2 preview · In development")).toBeVisible();
   await page.reload();
-  await expect(page.getByRole("heading",{name:"Eco Canopy"})).toBeVisible();
-  await expect(page.locator(".story-shot canvas")).toHaveAttribute("data-renderer","three");
+  await expect(page.getByRole("heading",{name:"Beyond the Canopy"})).toBeVisible();
+  await expect(page.locator(".film-frame canvas")).toHaveAttribute("data-renderer","three");
   await page.goto("/#story-archive");
   await expect(page.locator(".archive-cards article")).toHaveCount(5);
   await expect(page.getByRole("heading",{name:"Stability Directive"})).toBeVisible();
-  await page.getByRole("link",{name:"Replay opening"}).press("Enter");
+  await page.getByRole("link",{name:"Replay opening film"}).press("Enter");
   await expect(page.getByRole("heading",{name:"The Last Spark"})).toBeVisible();
   await page.getByRole("button",{name:"Skip scene"}).focus();
   await page.keyboard.press("Enter");
@@ -121,4 +130,40 @@ test("touch can win a cached story level at the narrow phone viewport",async({br
     await expect(page.locator("#native-result")).toContainText("CIRCUIT COMPLETE",{timeout:15000});
     await page.screenshot({path:info.outputPath("aero-offline-phone.jpg"),fullPage:true});
   } finally { await context.close(); }
+});
+
+test("film time drives Blender cast motion, can pause and resume, and never unlocks a puzzle",async({page})=>{
+  test.skip(!await page.evaluate(()=>!!document.createElement("canvas").getContext("webgl2")),"WebGL2 unavailable");
+  await page.setViewportSize({width:320,height:700});
+  await page.addInitScript(()=>{
+    localStorage.setItem("ripple-graphics","low");
+    if(!localStorage.getItem("ripple-circuit-story-v1"))localStorage.setItem("ripple-circuit-story-v1",JSON.stringify({
+      version:1,best:{},viewed:[],presentation:{music:false},
+    }));
+  });
+  await page.goto("/#story-intro");
+  const cast=page.locator(".film-frame canvas[data-cast=blender]");
+  await cast.waitFor();
+  const before=await cast.getAttribute("data-pose");
+  await expect.poll(()=>cast.getAttribute("data-pose")).not.toBe(before);
+  await page.getByRole("button",{name:"Pause",exact:true}).press("Enter");
+  const stopped=await cast.getAttribute("data-pose");
+  await page.waitForTimeout(200);
+  await expect(cast).toHaveAttribute("data-pose",stopped!);
+  await page.getByRole("button",{name:"Next shot"}).press("Enter");
+  await expect(page.locator("#shot-label")).toHaveText("The fracture");
+  await expect(cast).toHaveAttribute("data-energy","1.00");
+  await page.getByRole("slider",{name:"Scene time"}).evaluate((slider:HTMLInputElement)=>{
+    slider.value="21";
+    slider.dispatchEvent(new Event("input",{bubbles:true}));
+  });
+  await expect(cast).not.toHaveAttribute("data-energy","1.00");
+  await page.getByText("Read transcript",{exact:true}).press("Enter");
+  await expect(page.locator("details[open]")).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.getByRole("button",{name:"Skip scene"}).press("Enter");
+  await expect(page).toHaveURL(/st4-aero-1#story-play$/);
+  const progress=await page.evaluate(()=>JSON.parse(localStorage.getItem("ripple-circuit-story-v1")!));
+  expect(progress.best).toEqual({});
+  expect(progress.viewed).toEqual(["first-spark"]);
 });
