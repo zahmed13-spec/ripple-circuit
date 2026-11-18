@@ -1,3 +1,11 @@
+# Ripple Circuit 4.0 — The Fractured Ripple
+
+Story Mode opens Aero Haven, a five-circuit 3D chapter about restoring a dormant aqueduct. It adds real water currents, a linked three-stage finale, skippable story scenes, and local chapter progression. Eco Canopy opens as a preview after the finale.
+
+Run `pnpm install --frozen-lockfile` and `pnpm dev` with Node 24 and pnpm 11.25. Open `/#story` from the local address. [Read the story release notes](RELEASE-4.0.md) for the five puzzles, supported controls, validation and rollback. Earlier game modes and development notes follow.
+
+---
+
 # Ripple Circuit 3D
 
 Actual Three.js arenas for every classic circuit, plus a separate twelve-level Rapier campaign with gravity, ramps, bridges, falls and mechanisms. Play the public [game](https://zahmed13-spec.github.io/ripple-circuit/) or [spatial campaign](https://zahmed13-spec.github.io/ripple-circuit/#depth).

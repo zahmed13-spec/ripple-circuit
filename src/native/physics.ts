@@ -4,9 +4,11 @@ export const ready = R.init();
 export const ENGINE = "rapier-0.21.0-rc3.1";
 export type Vec = { x: number; y: number; z: number };
 export type Input = Vec & { tick: number; surface: string };
+export const STORY_ENGINE = "rapier-0.21.0-rc4.1";
+export type Current = { id: string; x: number; y: number; z: number; w: number; d: number; force: Vec; switchId?: string };
 export type NativeLevel = {
   id: number;
-  version: 3;
+  version: 3 | 4;
   title: string;
   chapter: string;
   hint: string;
@@ -17,13 +19,15 @@ export type NativeLevel = {
   switches: SceneData["switches"];
   pulseLimit: number;
   solution: Input[];
+  currents?: Current[];
+  requiredSwitches?: string[];
 };
 export const LIMIT = 7200,
   RADIUS = 3;
 export function validate(l: NativeLevel) {
   const errors: string[] = [];
   const finite = (...n: number[]) => n.every(Number.isFinite);
-  if (l.version !== 3 || !Number.isInteger(l.id) || l.id < 1)
+  if (![3, 4].includes(l.version) || !Number.isInteger(l.id) || l.id < 1)
     errors.push("version");
   if (l.pulseLimit < 1 || l.pulseLimit > 8 || !Number.isInteger(l.pulseLimit))
     errors.push("limit");
@@ -58,8 +62,24 @@ export function validate(l: NativeLevel) {
   for (const g of [...l.goals, ...l.switches])
     if (!finite(g.x, g.y, g.z, g.radius) || g.radius <= 0)
       errors.push("sensor");
+  if (l.version === 3 && (l.currents || l.requiredSwitches)) errors.push("story mechanics");
+  if ((l.currents?.length ?? 0) > 12 ||
+      new Set(l.currents?.map(c => c.id)).size !== (l.currents?.length ?? 0))
+    errors.push("currents");
+  for (const c of l.currents ?? []) {
+    if (!finite(c.x,c.y,c.z,c.w,c.d,...Object.values(c.force)) ||
+        c.w <= 0 || c.d <= 0 || Math.hypot(c.force.x,c.force.y,c.force.z) > 18 ||
+        c.switchId && !l.switches.some(s => s.id === c.switchId)) errors.push("current bounds");
+  }
+  if (l.requiredSwitches?.some(id => !l.switches.some(s => s.id === id))) errors.push("required switch");
   return errors;
 }
+export const currentActive = (c: Current, activated: readonly string[]) =>
+  !c.switchId || activated.includes(c.switchId);
+export const inCurrent = (c: Current, p: Vec, radius: number) =>
+  Math.abs(p.x - c.x) <= c.w / 2 && Math.abs(p.z - c.z) <= c.d / 2 &&
+  Math.abs(p.y - radius - c.y) <= 0.45;
+
 /** Independent, fixed 60 Hz simulation. No wall clock, renderer or random source. */
 export class Simulation {
   world: R.World;
@@ -167,6 +187,21 @@ export class Simulation {
     this.events = [];
     this.tick++;
     for (let k = 0; k < 2; k++) {
+      if (this.level.version === 4) {
+        for (const current of this.level.currents ?? []) {
+          if (!currentActive(current, this.activated)) continue;
+          this.bodies.forEach((body, i) => {
+            const orb = this.orbs[i];
+            if (orb.state === "active" && inCurrent(current, body.translation(), orb.radius)) {
+              body.applyImpulse({
+                x: current.force.x * this.world.timestep,
+                y: current.force.y * this.world.timestep,
+                z: current.force.z * this.world.timestep,
+              }, true);
+            }
+          });
+        }
+      }
       this.world.step(this.queue);
       this.queue.drainCollisionEvents((_a, _b, started) => {
         if (started && !this.events.includes("hit")) this.events.push("hit");
@@ -218,7 +253,8 @@ export class Simulation {
         }
       });
     }
-    if (this.orbs.every((o) => o.state === "docked")) {
+    if (this.orbs.every((o) => o.state === "docked") &&
+        (this.level.requiredSwitches ?? []).every(id => this.activated.includes(id))) {
       this.status = "won";
       this.reason = "Every marble is home.";
     } else if (this.status === "playing") {
