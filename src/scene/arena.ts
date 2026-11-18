@@ -43,6 +43,7 @@ export type SceneData = {
 export class Arena3D {
   renderer: T.WebGLRenderer;
   scene = new T.Scene();
+  environment:T.CubeTexture|null=null;
   camera = new T.OrthographicCamera(-9, 9, 9, -9, 0.1, 100);
   root = new T.Group();
   orbs = new Map<number, T.Mesh>();
@@ -114,6 +115,7 @@ export class Arena3D {
     });
     const env = this.own(new T.CubeTexture(faces));
     env.needsUpdate = true;
+    this.environment=env;
     this.scene.environment = env;
     this.scene.environmentIntensity = 0.4;
     this.renderer.shadowMap.type = T.PCFSoftShadowMap;
@@ -179,7 +181,7 @@ export class Arena3D {
           color,
           roughness: 0.28,
           metalness: 0.08,
-          clearcoat: 0.65,
+          clearcoat: this.quality==='low'?0:0.65,
         }),
       ),
     );
@@ -355,6 +357,8 @@ export class Arena3D {
       ),
     );
     this.renderer.shadowMap.enabled = effective !== "low";
+    this.scene.environment=effective==='low'?null:this.environment;
+    for(const resource of this.resources)if(resource instanceof T.MeshPhysicalMaterial){resource.userData.baseRoughness??=resource.roughness;resource.userData.baseClearcoat??=resource.clearcoat;resource.clearcoat=effective==='low'?0:resource.userData.baseClearcoat;resource.roughness=effective==='low'?.65:resource.userData.baseRoughness;resource.needsUpdate=true;}
     this.sun.shadow.mapSize.set(
       effective === "high" ? 1024 : 512,
       effective === "high" ? 1024 : 512,

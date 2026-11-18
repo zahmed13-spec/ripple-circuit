@@ -3,6 +3,7 @@ import {chromium} from '@playwright/test';
 import {mkdirSync,writeFileSync} from 'node:fs';
 const evidence='../ripple-3d-evidence';mkdirSync(evidence,{recursive:true});
 const browser=await chromium.launch();const context=await browser.newContext({viewport:{width:1366,height:900}}),page=await context.newPage();
+if(process.env.CI)await page.addInitScript(()=>{try{localStorage.setItem('ripple-graphics','low');}catch{}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
 const root=(process.env.PAGES_ORIGIN||'http://127.0.0.1:5173')+'/ripple-circuit/';await page.goto(root);
 if(!await page.locator('.arena-top h2').getByText('The First Ripple').isVisible())throw Error('Wrong home');

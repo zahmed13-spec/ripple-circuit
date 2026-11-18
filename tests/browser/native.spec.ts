@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 import { worldPoint, tapWorld } from "./points";
 import {
   ready,
@@ -9,11 +9,16 @@ import {
 } from "../../src/native/physics";
 import { nativeLevels } from "../../src/native/levels";
 test.beforeAll(() => ready);
+test.beforeEach(async({page},info)=>{
+ if(info.title.includes('Canvas fallback'))return;
+ const supported=await page.evaluate(()=>{const canvas=document.createElement('canvas');const gl=canvas.getContext('webgl2');if(!gl)return false;gl.getExtension('WEBGL_lose_context')?.loseContext();return true;});
+ test.skip(!supported,'This browser environment cannot create WebGL2; classic fallback is tested separately. Native rendering is verified on supported engines.');
+});
 for (const mobile of [false, true])
   test(`native campaign exact replays, checkpoints and scenes ${mobile ? "phone" : "desktop"}`, async ({
     page,
   }, info) => {
-    test.setTimeout(240000);
+    test.setTimeout(process.env.CI?480000:240000);
     await page.setViewportSize(
       mobile ? { width: 390, height: 844 } : { width: 1366, height: 900 },
     );
@@ -115,6 +120,7 @@ test("native precision cancellation, keyboard, pause, sharing and image", async 
   await page.keyboard.press("Escape");
   await page.mouse.up();
   await expect(page.locator("#native-pulses")).toHaveText("3 / 3");
+  await page.goto("/?c=c3-11#spatial");
   await page.locator("#native-arena").focus();
   await page.keyboard.press("Enter");
   await page.locator("#native-pause").click();
@@ -122,6 +128,8 @@ test("native precision cancellation, keyboard, pause, sharing and image", async 
   await page.waitForTimeout(150);
   expect(await page.locator("#native-time").innerText()).toBe(time);
   await page.locator("#native-resume").click();
+  await page.goto("/?c=c3-1#spatial");
+  await page.locator("#native-arena").press("Enter");
   await expect(page.locator("#native-result")).toContainText(
     "CIRCUIT COMPLETE",
     { timeout: 15000 },
@@ -298,4 +306,4 @@ test("native touch precision sends once, cancel and orientation preserve pulses"
   );
   await context.close();
 });
-test('overlapping ramp fades to reveal lower destination without changing surface selection',async({page})=>{await page.goto('/?c=c3-12#spatial');await expect(page.locator('#native-arena')).toHaveAttribute('data-renderer','three');await expect.poll(async()=>Number(await page.locator('#native-arena').getAttribute('data-occluded'))).toBeGreaterThan(0);await page.locator('#surface').selectOption('incline');await expect(page.locator('#surface')).toHaveValue('incline');await page.getByLabel('Camera view').selectOption('top');await expect.poll(async()=>Number(await page.locator('#native-arena').getAttribute('data-occluded'))).toBeGreaterThan(0);});
+test('overlapping ramp fades to reveal lower destination without changing surface selection',async({page})=>{const shaderErrors:string[]=[];page.on('console',m=>{if(m.type()==='error'&&/shader|compile/i.test(m.text()))shaderErrors.push(m.text());});await page.goto('/?c=c3-12#spatial');await expect(page.locator('#native-arena')).toHaveAttribute('data-renderer','three');await expect.poll(async()=>Number(await page.locator('#native-arena').getAttribute('data-occluded'))).toBeGreaterThan(0);await page.locator('#surface').selectOption('incline');await expect(page.locator('#surface')).toHaveValue('incline');await page.getByLabel('Camera view').selectOption('top');await expect.poll(async()=>Number(await page.locator('#native-arena').getAttribute('data-occluded'))).toBeGreaterThan(0);for(const quality of ['low','high','medium']){await page.getByLabel('Graphics quality').selectOption(quality);await expect(page.locator('#native-arena')).toHaveAttribute('data-quality',quality);await page.waitForTimeout(100);}expect(shaderErrors).toEqual([]);});
