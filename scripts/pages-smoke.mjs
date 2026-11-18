@@ -1,7 +1,7 @@
 import {projectClassic} from './projection.mjs';
 import {chromium} from '@playwright/test';
 import {mkdirSync,writeFileSync} from 'node:fs';
-const evidence='../ripple-3d-evidence';mkdirSync(evidence,{recursive:true});
+const evidence='../ripple-4-evidence';mkdirSync(evidence,{recursive:true});
 const browser=await chromium.launch();const context=await browser.newContext({viewport:{width:1366,height:900}}),page=await context.newPage();
 if(process.env.CI)await page.addInitScript(()=>{try{localStorage.setItem('ripple-graphics','low');}catch{}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
@@ -18,4 +18,15 @@ await context.setOffline(true);await page.reload();await page.locator('#arena').
 await page.goto(root+'?c=c3-2#spatial');await page.locator('#native-arena[data-renderer=three]').waitFor();await page.locator('#native-arena').press('Enter');await page.locator('#native-result').filter({hasText:'CIRCUIT COMPLETE'}).waitFor();await page.locator('#native-image').click();await context.setOffline(true);await page.reload();await page.locator('#native-arena[data-renderer=three]').waitFor();await page.locator('#native-arena').press('Enter');await page.locator('#native-result').filter({hasText:'CIRCUIT COMPLETE'}).waitFor();await context.setOffline(false);
 await page.goto(root+'?c=c2-12#play');await page.setViewportSize({width:390,height:844});await page.screenshot({path:evidence+'/finale-phone.png',fullPage:true});
 await page.goto(root+'#levels');await page.screenshot({path:evidence+'/map-phone.png',fullPage:true});
-const result={passed:errors.length===0,errors,fullscreen,worker,checks:['base-path assets','real switch completion','legacy offline completion','hash/query refresh','service-worker scope','result PNG download','fullscreen entry/exit','native ramp completion','native WASM offline completion','native PNG request']};writeFileSync('pages-smoke-3d.json',JSON.stringify(result,null,2)+'\n');console.log(result);await browser.close();if(errors.length)throw Error(errors.join('\n'));
+await page.goto(root+'#story');
+await page.getByRole('heading',{name:'The Fractured Ripple'}).waitFor();
+await page.getByRole('link',{name:'Enter Aero Haven'}).click();
+await page.getByRole('link',{name:'Begin story'}).click();
+await page.getByRole('button',{name:'Skip scene'}).click();
+await page.locator('#native-arena[data-renderer=three]').waitFor();
+await context.setOffline(true);
+await page.reload();
+await page.locator('#native-arena[data-renderer=three]').press('Enter');
+await page.locator('#native-result').filter({hasText:'CIRCUIT COMPLETE'}).waitFor();
+await context.setOffline(false);
+const result={passed:errors.length===0,errors,fullscreen,worker,checks:['base-path assets','real switch completion','legacy offline completion','hash/query refresh','service-worker scope','result PNG download','fullscreen entry/exit','native ramp completion','native WASM offline completion','native PNG request','story map and intro skip','story offline win']};writeFileSync(evidence+'/pages-smoke-4.json',JSON.stringify(result,null,2)+'\n');console.log(result);await browser.close();if(errors.length)throw Error(errors.join('\n'));

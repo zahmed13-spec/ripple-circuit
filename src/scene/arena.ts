@@ -1,3 +1,4 @@
+import { StoryEnvironment, type Environment } from "../story/environment";
 import * as T from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { gameToWorld, worldToGame, screenToWorld } from "./coordinates";
@@ -39,11 +40,14 @@ export type SceneData = {
   }[];
   switches: { id: string; x: number; y: number; z: number; radius: number }[];
   native: boolean;
+  story?: Environment;
 };
 export class Arena3D {
   renderer: T.WebGLRenderer;
   scene = new T.Scene();
   environment:T.CubeTexture|null=null;
+  story?: StoryEnvironment;
+  private selection?: T.LineSegments;
   camera = new T.OrthographicCamera(-9, 9, 9, -9, 0.1, 100);
   root = new T.Group();
   orbs = new Map<number, T.Mesh>();
@@ -163,6 +167,7 @@ export class Arena3D {
     this.scene.add(this.marker);
     this.marker.visible = false;
     this.setData(data);
+    if (data.story) this.story = new StoryEnvironment(this,data.story);
     this.setQuality("auto");
     this.setCamera("isometric");
     canvas.addEventListener("webglcontextlost", this.loss);
@@ -224,7 +229,7 @@ export class Arena3D {
           ? "#8f9bd5"
           : b.kind === "wall"
             ? "#a8dbe5"
-            : "#caf1ec",
+            : data.story?.theme.platform ?? "#caf1ec",
       );
       m.position.set(b.x, b.y, b.z);
       if (b.rotation) m.quaternion.copy(b.rotation);
@@ -245,7 +250,7 @@ export class Arena3D {
           ),
           b.rotation ? "#83cebf" : "#bce4de",
         );
-        face.position.y = b.h / 2 - 0.02;
+        face.position.y = b.h / 2 + (data.story ? -0.016 : -0.02);
         m.add(face);
       }
       if (b.kind === "gate") this.gates.set(b.id, m);
@@ -436,7 +441,29 @@ export class Arena3D {
         .find((h) => h.face && h.face.normal.y > 0.5) || null
     );
   }
+  highlightSurface(id: string) {
+    if (this.selection) {
+      this.selection.removeFromParent();
+      for (const resource of [this.selection.geometry, this.selection.material as T.Material]) {
+        resource.dispose();
+        this.resources.delete(resource);
+      }
+      this.selection = undefined;
+    }
+    const surface = this.surfaces.find(mesh => mesh.userData.id === id);
+    if (surface) {
+      this.selection = new T.LineSegments(
+        this.own(new T.EdgesGeometry(surface.geometry, 45)),
+        this.own(new T.LineBasicMaterial({color:"#006779", depthTest:false, transparent:true, opacity:.85})),
+      );
+      this.selection.renderOrder = 4;
+      surface.add(this.selection);
+    }
+    this.dirty = true;
+    this.canvas.dataset.surface = surface ? id : "";
+  }
   update(orbs: SceneOrb[], opened: string[], activated: string[]) {
+    this.story?.update(activated);
     for (const o of orbs) {
       const m = this.orbs.get(o.id)!;
       const dx = o.x - m.position.x,
@@ -584,6 +611,7 @@ export class Arena3D {
     }
     for(const block of this.blockers)block.traverse(object=>{if(object instanceof T.Mesh){const material=object.material as T.Material;const faded=obstructing.has(block);if(material.transparent!==faded){material.transparent=faded;material.needsUpdate=true;}material.opacity=faded?.22:1;material.depthWrite=!faded;}});
     this.canvas.dataset.occluded=String(obstructing.size);
+    this.story?.animate(dt,reduced);
     this.renderer.render(this.scene, this.camera);
     if (this.quality === "auto" && !this.autoSettled && dt > 0) {
       this.frames++;
