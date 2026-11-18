@@ -73,6 +73,8 @@ export class Arena3D {
   lastDraw = 0;
   native = false;
   targetCamera: T.Vector3 | null = null;
+  private focus = new T.Vector3();
+  private targetFocus?: T.Vector3;
   aimPoint: T.Vector3 | null = null;
   aimRadius = 3;
   spatialAim = false;
@@ -141,12 +143,13 @@ export class Arena3D {
       "#55c9d7",
     );
     ocean.position.y = -3.5;
-    this.scene.add(ocean);
+    if(!data.story)this.scene.add(ocean);
     for (let i = 0; i < 7; i++) {
       const cloud = this.mesh(new T.SphereGeometry(1, 12, 8), "#f4fdff");
       cloud.scale.set(2.2, 0.35, 1);
       cloud.position.set((i - 3) * 7, -0.8, -13 - Math.abs(i - 3));
       this.scene.add(cloud);
+      if(data.story)cloud.userData.cloudX=cloud.position.x;
     }
     this.preview = this.mesh(
       data.native
@@ -373,7 +376,29 @@ export class Arena3D {
     this.resize();
     this.canvas.dataset.quality = effective;
   }
+  cinematicShot(shot:{
+    position:readonly [number,number,number];
+    focus:readonly [number,number,number];
+    zoom:number;
+  },smooth:boolean) {
+    const position=new T.Vector3(...shot.position);
+    this.zoom=shot.zoom;
+    if(smooth) {
+      this.targetCamera=position;
+      this.targetFocus=new T.Vector3(...shot.focus);
+    } else {
+      this.targetCamera=null;
+      this.targetFocus=undefined;
+      this.focus.set(...shot.focus);
+      this.camera.position.copy(position);
+      this.camera.lookAt(this.focus);
+      this.camera.updateMatrixWorld();
+    }
+    this.resize();
+  }
   setCamera(p: string, animate = false) {
+    this.focus.set(0,this.native ? .65 : 0,0);
+    this.targetFocus=undefined;
     this.preset = p;
     const v =
       p === "top"
@@ -566,18 +591,21 @@ export class Arena3D {
       now - this.lastDraw < 150
     )
       return;
+    if(this.story && this.quality==="low" && !this.dirty && now-this.lastDraw<30) return;
+    const visualDt=this.story&&this.lastDraw ? Math.min(.15,(now-this.lastDraw)/1000) : dt;
     this.lastDraw = now;
     this.dirty = false;
     if (this.targetCamera) {
-      this.camera.position.lerp(
-        this.targetCamera,
-        reduced ? 1 : 1 - Math.exp(-dt * 14),
-      );
+      const blend = reduced ? 1 : 1-Math.exp(-dt*(this.targetFocus?4.5:14));
+      this.camera.position.lerp(this.targetCamera,blend);
+      if(this.targetFocus)this.focus.lerp(this.targetFocus,blend);
       if (this.camera.position.distanceTo(this.targetCamera) < 0.01) {
         this.camera.position.copy(this.targetCamera);
         this.targetCamera = null;
+        if(this.targetFocus)this.focus.copy(this.targetFocus);
+        this.targetFocus=undefined;
       }
-      this.camera.lookAt(0, this.native ? 0.65 : 0, 0);
+      this.camera.lookAt(this.focus);
       this.camera.updateMatrixWorld();
       this.canvas.dataset.projection = JSON.stringify(
         new T.Matrix4().multiplyMatrices(
@@ -611,7 +639,7 @@ export class Arena3D {
     }
     for(const block of this.blockers)block.traverse(object=>{if(object instanceof T.Mesh){const material=object.material as T.Material;const faded=obstructing.has(block);if(material.transparent!==faded){material.transparent=faded;material.needsUpdate=true;}material.opacity=faded?.22:1;material.depthWrite=!faded;}});
     this.canvas.dataset.occluded=String(obstructing.size);
-    this.story?.animate(dt,reduced);
+    this.story?.animate(visualDt,reduced);
     this.renderer.render(this.scene, this.camera);
     if (this.quality === "auto" && !this.autoSettled && dt > 0) {
       this.frames++;

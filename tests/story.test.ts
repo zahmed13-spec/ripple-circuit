@@ -1,8 +1,9 @@
+import { archiveEntries } from "../src/story/narrative";
 import {beforeAll, describe, expect, test} from "vitest";
 import {currentActive,inCurrent,ready,replay3,Simulation,summary,validate} from "../src/native/physics";
 import {nativeLevels} from "../src/native/levels";
 import {storyLevels} from "../src/story/levels";
-import {available,completed,loadStory,persistStory,recordStory,restored,STORY_KEY} from "../src/story/save";
+import {available,completed,loadStory,persistStory,recordStory,restored,STORY_KEY,restorationStage,markViewed,presentation} from "../src/story/save";
 
 beforeAll(() => ready);
 describe("Aero Haven physics",()=>{
@@ -74,4 +75,32 @@ test("story results unlock sequentially, keep better scores, and preserve classi
   expect(completed(loadStory(storage))).toBe(1);
   entries.set(STORY_KEY,"invalid");
   expect(completed(loadStory(storage))).toBe(0);
+});
+
+test("4.5 reads 4.0 saves and derives each discovery exactly once",()=>{
+  const entries=new Map<string,string>();
+  const storage={
+    getItem:(key:string)=>entries.get(key)??null,
+    setItem:(key:string,value:string)=>entries.set(key,value),
+  };
+  entries.set(STORY_KEY,JSON.stringify({version:1,best:{"aero-1":{pulses:1,ticks:49,stars:3}},viewed:["first-spark"]}));
+  const old=loadStory(storage);
+  expect(restorationStage(old)).toBe(1);
+  expect(old.viewed).toEqual(["first-spark"]);
+  expect(markViewed(old,"first-spark")).toBe(false);
+  expect(archiveEntries(1).map(entry=>entry.clue)).toEqual(["The Last Spark"]);
+  for(let i=1;i<storyLevels.length;i++){
+    const level=storyLevels[i];
+    const sim=replay3(level,level.solution);
+    expect(sim.tick).toBe([49,162,169,193,341][i]);
+    expect(recordStory(old,level.storyId,{pulses:sim.used,ticks:sim.tick,stars:3})).toBe(true);
+    expect(archiveEntries(restorationStage(old))).toHaveLength(i+1);
+    sim.dispose();
+  }
+  expect(markViewed(old,"unrecognized")).toBe(false);
+  expect(markViewed(old,"water-returns")).toBe(true);
+  expect(markViewed(old,"water-returns")).toBe(false);
+  presentation(old).music=false;
+  persistStory(old,storage);
+  expect(loadStory(storage)).toEqual(old);
 });

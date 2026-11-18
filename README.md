@@ -1,3 +1,9 @@
+# Ripple Circuit 4.5 — The Living World
+
+Progressively restore Aero Haven across the five published 3D puzzles. Visit the Current Archive, replay the new cinematics, and unlock a 3D preview of Eco Canopy. [Play Story Mode](https://zahmed13-spec.github.io/ripple-circuit/#story) · [4.5 release notes](RELEASE-4.5.md)
+
+---
+
 # Ripple Circuit 4.0 — The Fractured Ripple
 
 Story Mode opens Aero Haven, a five-circuit 3D chapter about restoring a dormant aqueduct. It adds real water currents, a linked three-stage finale, skippable story scenes, and local chapter progression. Eco Canopy opens as a preview after the finale.
