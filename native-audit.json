@@ -1,0 +1,519 @@
+[
+  {
+    "id": 1,
+    "title": "First Dimension",
+    "reference": {
+      "status": "won",
+      "tick": 71,
+      "used": 1,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 2,
+          "y": 0.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0.6732825636863708,
+            "w": -0.7393853068351746
+          }
+        }
+      ],
+      "activated": [],
+      "opened": []
+    },
+    "placement": {
+      "wins": 6,
+      "total": 6,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 0,
+      "total": 0,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 2,
+    "title": "The Incline",
+    "reference": {
+      "status": "won",
+      "tick": 47,
+      "used": 1,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 3,
+          "y": 0.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": -2.400602916452499e-8,
+            "y": 1.2890366107853879e-8,
+            "z": -0.7421817779541016,
+            "w": 0.6701986789703369
+          }
+        }
+      ],
+      "activated": [],
+      "opened": []
+    },
+    "placement": {
+      "wins": 6,
+      "total": 6,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 0,
+      "total": 0,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 3,
+    "title": "Over the Edge",
+    "reference": {
+      "status": "won",
+      "tick": 59,
+      "used": 1,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 2,
+          "y": 0.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": -0.9995012283325195,
+            "w": 0.03157952427864075
+          }
+        }
+      ],
+      "activated": [],
+      "opened": []
+    },
+    "placement": {
+      "wins": 6,
+      "total": 6,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 0,
+      "total": 0,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 4,
+    "title": "The High Road",
+    "reference": {
+      "status": "won",
+      "tick": 99,
+      "used": 1,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 3,
+          "y": 1.78,
+          "z": -1,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": 3.90952870077399e-9,
+            "y": -7.461720685775219e-10,
+            "z": 0.5947974920272827,
+            "w": 0.8038755655288696
+          }
+        }
+      ],
+      "activated": [],
+      "opened": []
+    },
+    "placement": {
+      "wins": 6,
+      "total": 6,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 0,
+      "total": 0,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 5,
+    "title": "Bridge Between",
+    "reference": {
+      "status": "won",
+      "tick": 133,
+      "used": 1,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 3.8,
+          "y": 1.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": -4.903378744702813e-11,
+            "y": 2.2349165573753993e-10,
+            "z": -0.9658671021461487,
+            "w": 0.25903820991516113
+          }
+        }
+      ],
+      "activated": [],
+      "opened": []
+    },
+    "placement": {
+      "wins": 6,
+      "total": 6,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 0,
+      "total": 0,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 6,
+    "title": "Gravity’s Turn",
+    "reference": {
+      "status": "won",
+      "tick": 159,
+      "used": 2,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 3,
+          "y": 0.28,
+          "z": 2.7,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": -0.022041885182261467,
+            "y": -0.30848461389541626,
+            "z": -0.950291633605957,
+            "w": -0.03601711988449097
+          }
+        }
+      ],
+      "activated": [],
+      "opened": []
+    },
+    "placement": {
+      "wins": 11,
+      "total": 12,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 2,
+      "total": 2,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 7,
+    "title": "Pressure Below",
+    "reference": {
+      "status": "won",
+      "tick": 256,
+      "used": 2,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 3.5,
+          "y": 0.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": -0.041869502514600754,
+            "y": 0.023456798866391182,
+            "z": 0.634979248046875,
+            "w": 0.7710371017456055
+          }
+        }
+      ],
+      "activated": [
+        "a"
+      ],
+      "opened": [
+        "gate"
+      ]
+    },
+    "placement": {
+      "wins": 9,
+      "total": 12,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 1,
+      "total": 2,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 8,
+    "title": "Open the Sky",
+    "reference": {
+      "status": "won",
+      "tick": 57,
+      "used": 1,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 3.8,
+          "y": 0.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": -2.914951835464308e-9,
+            "y": 2.513350594313124e-8,
+            "z": -0.8102083206176758,
+            "w": -0.5861421227455139
+          }
+        }
+      ],
+      "activated": [
+        "a"
+      ],
+      "opened": [
+        "gate"
+      ]
+    },
+    "placement": {
+      "wins": 4,
+      "total": 6,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 0,
+      "total": 0,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 9,
+    "title": "The Stepping Path",
+    "reference": {
+      "status": "won",
+      "tick": 114,
+      "used": 1,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 3.5,
+          "y": 0.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0.9975007772445679,
+            "w": 0.0706557184457779
+          }
+        }
+      ],
+      "activated": [],
+      "opened": []
+    },
+    "placement": {
+      "wins": 6,
+      "total": 6,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 0,
+      "total": 0,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 10,
+    "title": "Falling Domino",
+    "reference": {
+      "status": "won",
+      "tick": 219,
+      "used": 2,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": -1.1303303182330637e-8,
+            "y": -2.7093847165815532e-9,
+            "z": -0.4809502959251404,
+            "w": 0.8767479062080383
+          }
+        },
+        {
+          "id": 1,
+          "x": 3.5,
+          "y": 0.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#f4b94a",
+          "state": "docked",
+          "rotation": {
+            "x": 0.0326182022690773,
+            "y": -0.19102813303470612,
+            "z": 0.09697270393371582,
+            "w": 0.9762380123138428
+          }
+        }
+      ],
+      "activated": [
+        "a"
+      ],
+      "opened": [
+        "gate"
+      ]
+    },
+    "placement": {
+      "wins": 7,
+      "total": 12,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 2,
+      "total": 2,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 11,
+    "title": "Three Levels Deep",
+    "reference": {
+      "status": "won",
+      "tick": 340,
+      "used": 2,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 3.5,
+          "y": 0.28,
+          "z": -1.5,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0.9975007772445679,
+            "w": 0.0706557184457779
+          }
+        },
+        {
+          "id": 1,
+          "x": 3.5,
+          "y": 0.28,
+          "z": 1.5,
+          "radius": 0.28,
+          "color": "#f4b94a",
+          "state": "docked",
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0.9813467264175415,
+            "w": -0.1922464817762375
+          }
+        }
+      ],
+      "activated": [],
+      "opened": []
+    },
+    "placement": {
+      "wins": 12,
+      "total": 12,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 2,
+      "total": 2,
+      "offsetTicks": 6
+    }
+  },
+  {
+    "id": 12,
+    "title": "The Ripple Machine",
+    "reference": {
+      "status": "won",
+      "tick": 161,
+      "used": 2,
+      "orbs": [
+        {
+          "id": 0,
+          "x": 0.5,
+          "y": 0.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#32bcd4",
+          "state": "docked",
+          "rotation": {
+            "x": 6.237375771434017e-8,
+            "y": 2.6805450303868383e-8,
+            "z": -0.6025731563568115,
+            "w": -0.7980636954307556
+          }
+        },
+        {
+          "id": 1,
+          "x": 3.7,
+          "y": 0.28,
+          "z": 0,
+          "radius": 0.28,
+          "color": "#f4b94a",
+          "state": "docked",
+          "rotation": {
+            "x": -2.0092192354326244e-9,
+            "y": 1.1916639230946657e-8,
+            "z": -0.0954584851861,
+            "w": -0.9954334497451782
+          }
+        }
+      ],
+      "activated": [
+        "a"
+      ],
+      "opened": [
+        "gate"
+      ]
+    },
+    "placement": {
+      "wins": 8,
+      "total": 12,
+      "offsetWorldUnits": 0.04
+    },
+    "timing": {
+      "wins": 1,
+      "total": 2,
+      "offsetTicks": 6
+    }
+  }
+]

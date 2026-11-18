@@ -11,7 +11,12 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build:
+    name: Validate ${{ matrix.browser }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -24,23 +29,35 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm run build
-      - run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
       - name: Browser and offline tests
         run: |
           pnpm exec vite preview --host 127.0.0.1 --port 5173 --strictPort &
           server_pid=$!
           trap 'kill "$server_pid"' EXIT
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:5173/ >/dev/null && break; sleep 1; done
-          pnpm test:browser
+          pnpm test:browser --project=${{ matrix.browser }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: browser-failures
+          name: browser-failures-${{ matrix.browser }}
           path: test-results
       - run: pnpm run build
+        if: matrix.browser == 'chromium'
         env:
           BASE_PATH: /ripple-circuit/
+      - name: Verify the actual Pages subpath
+        if: matrix.browser == 'chromium'
+        env:
+          BASE_PATH: /ripple-circuit/
+        run: |
+          pnpm exec vite preview --host 127.0.0.1 --port 5173 --strictPort &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:5173/ripple-circuit/ >/dev/null && break; sleep 1; done
+          node scripts/pages-smoke.mjs
       - uses: actions/upload-pages-artifact@v3
+        if: matrix.browser == 'chromium'
         with:
           path: dist
   deploy:
@@ -52,8 +69,8 @@ jobs:
       id-token: write
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - name: Deploy
-        id: deployment
+        id: deploy
         uses: actions/deploy-pages@v4

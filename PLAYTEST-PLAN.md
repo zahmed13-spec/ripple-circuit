@@ -25,3 +25,9 @@ The session-only ring buffer records attempt, level-start, pulse, complete/fail,
 Provisional decision thresholds from the brief: 70% tutorial completion, 40% voluntary continuation, 30% post-win retry/continue, most participants correctly explaining force direction, zero critical mobile input failures. Report counts as well as percentages, device distribution and uncertainty. Use comments and observed failures to choose what to fix. Do not install online analytics before a consent/disclosure design is approved.
 
 Next priorities: improve the corner/gate route if users struggle, verify physical iPhone/Android cancellation and orientation behavior, then author a larger daily pool. Consider ghosts only if players voluntarily optimize records; accounts/global leaderboards only with demonstrated demand and a trusted validation plan.
+
+## Spatial release study (not yet performed)
+
+Give first-time players the 3D build on their own phones. Ask them to solve First Dimension, The Incline and Over the Edge without verbal coaching. Record whether they correctly predict force direction, distinguish the ramp from the floor, select the intended elevation, cancel a touch aim, and find top-down/reset controls. Measure first valid pulse, time to independent tutorial completion, unintended pulses and camera changes caused by occlusion.
+
+Then observe Pressure Below, Open the Sky, Falling Domino and The Ripple Machine. Compare placement/timing confusion with the published perturbation audit. Let players adapt later pulses; the automated audit deliberately keeps other inputs fixed. Do not interpret reference-playback success as human mastery. Ask which surfaces looked traversable and whether a fall felt predictable. Follow up on physical thermal/load/context-loss behavior separately from enjoyment.

@@ -30,3 +30,24 @@ Each solution is run through the actual browser reference-playback UI at desktop
 ## Daily content
 
 The new d2 schedule has 15 frozen entries: nine new campaign puzzles (4–12) and six selected original archetypes (4, 7, 12, 16, 20, 23). This is a mixed catalog, not 15 additional original puzzles. It repeats every 15 days; it improves mechanism variety but not repetition interval over d1's 22-day loop. Expanding to 28 independently designed daily puzzles is deferred until player evidence identifies which mechanics are worth expanding. d1 links keep the original 22-day mapping forever.
+
+## Native spatial campaign (physics 3)
+
+All twelve configurations are authored in `src/native/levels.ts`; destinations were set before reference input tuning. `scripts/tune-native.ts` searches subsequent pulses toward the fixed goals; `scripts/refine-native.ts` compares placement tolerance without moving goals. Never regenerate published c3 configurations in place.
+
+| Circuit | Physical idea | Validated reference |
+|---|---|---|
+| First Dimension | 3D radial impulse, actual floor contact | One horizontal launch |
+| The Incline | Gravity and contact with a sloped cuboid | Pulse down the ramp |
+| Over the Edge | Vertical fall, retained horizontal momentum | Launch from upper shelf to lower dock |
+| The High Road | Elevated route selection | Cross upper walkway; lower route is a tempting alternative, not a validated second solution |
+| Bridge Between | Narrow physical bridge with real fall risk | Align a pulse along bridge |
+| Gravity’s Turn | Ramp exit, collision and redirect | Descend, then redirect toward side dock |
+| Pressure Below | Falling contact activates a lower switch | Descend onto plate, then pass opened gate |
+| Open the Sky | Switch at ramp elevation | Roll down plate-controlled passage |
+| The Stepping Path | Two sequential height changes | Cross fixed stepping shelves; moving lift deliberately omitted |
+| Falling Domino | Real marble momentum transfer | Falling marble collides with second, then finish through gate |
+| Three Levels Deep | Three elevations and separate lanes | Guide two marbles to distinct lower docks |
+| The Ripple Machine | Ramp, collision, switch, gate and return pulse | Complete two-orb mechanism in stages |
+
+`native-audit.json` records completed reference runs, six .04-world-unit offsets per input and ±6-tick timing tests. Levels 6 and 12 reference inputs were refined for broader tolerance. Levels 7, 8, 10 and 12 remain priorities for real-player balancing. Twelve levels are available openly; the current progression marker recommends a next island rather than blocking exploration. The 3D daily repeats these twelve levels every twelve UTC days; it is not twelve additional designs.
