@@ -1,4 +1,4 @@
-import { aero, isStoryId, type StoryId } from "./chapters";
+import { aero, campaignIds, chapterFor, isStoryId, type StoryId } from "./chapters";
 
 import { sceneIds } from "./film/boards";
 
@@ -22,7 +22,7 @@ export function loadStory(storage?: Pick<Storage,"getItem">): StorySave {
   try {
     const raw = JSON.parse(storage?.getItem(STORY_KEY) ?? "null") as StorySave | null;
     if (raw?.version !== 1) return save;
-    for (const id of aero.levelIds) {
+    for (const id of campaignIds) {
       const result = raw.best?.[id];
       if (!validResult(result)) break;
       save.best[id] = result;
@@ -38,11 +38,13 @@ export function loadStory(storage?: Pick<Storage,"getItem">): StorySave {
   } catch { /* A corrupt or unavailable save starts a fresh story. */ }
   return save;
 }
-export const completed = (save: StorySave) => aero.levelIds.filter(id => save.best[id]).length;
+export const completed = (save: StorySave, chapter = aero) => chapter.levelIds.filter(id => save.best[id]).length;
+export const campaignCompleted = (save:StorySave) => campaignIds.filter(id=>save.best[id]).length;
+export const storyStage = (save:StorySave,id:StoryId) => completed(save,chapterFor(id));
 export const restorationStage = completed;
 export const restored = (save: StorySave) => completed(save) === aero.levelIds.length;
 export const available = (save: StorySave, id: StoryId) =>
-  isStoryId(id) && aero.levelIds.indexOf(id) <= completed(save);
+  isStoryId(id) && campaignIds.indexOf(id) <= campaignCompleted(save);
 
 export function recordStory(save: StorySave, id: StoryId, result: StoryResult) {
   if (!available(save,id) || !validResult(result)) return false;

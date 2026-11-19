@@ -1,3 +1,5 @@
+import { expansionFilms } from "./expansion";
+import type { ExpansionWorld } from "../chapters";
 import { filmContent, shotContent, dialogueContent, characterContent, worldContent } from "../../content";
 
 export type Vec3 = readonly [number, number, number];
@@ -27,6 +29,7 @@ export type Film = {
   stage:number;
   next:string;
   shots:readonly Shot[];
+  world?:ExpansionWorld;
 };
 const aero=worldContent.aero.title;
 const P=(x:number,y:number,z:number,roll:number,stretch:number,emotion:Emotion):Pose=>[x,y,z,roll,stretch,emotion];
@@ -48,7 +51,7 @@ const terminal=V([4.15,1.35,.25],[1.5,1.55,5.8],35);
 const close=V([-1.2,1.6,1.1],[.75,.75,4.4],33);
 const preview=V([0,1.7,-1.6],[8,5.7,12],39);
 
-export const films = {
+export const legacyFilms = {
  "story-intro":{
   id:"first-spark",title:filmContent["story-intro"].title,chapter:aero,stage:0,next:"aero-1",
   shots:[
@@ -202,6 +205,7 @@ export const films = {
  },
 } as const satisfies Record<string,Film>;
 
+export const films = {...legacyFilms,...expansionFilms};
 export type FilmRoute = keyof typeof films;
 export const isFilmRoute=(route:string):route is FilmRoute=>Object.hasOwn(films,route);
 export const sceneIds=Object.values(films).map(film=>film.id);

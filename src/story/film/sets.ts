@@ -1,3 +1,4 @@
+import type { WorldTheme } from "../themes";
 import * as T from "three";
 import type { Effect, Vec3 } from "./boards";
 import { cel, fill, type Own } from "./rigs";
@@ -21,21 +22,23 @@ export class FilmSet {
   private spill?:T.Mesh;
   private surface:T.ShaderMaterial;
   private sky:T.ShaderMaterial;
+  private themedSky=0;
   private readonly pale=new T.Color("#dff8f1");
   private readonly dark=new T.Color("#3d476e");
   private readonly shade=new T.Color();
   private readonly hazy=new T.Color("#cbf7eb");
   private readonly violet=new T.Color("#756c92");
-  constructor(private scene:T.Scene,private own:Own,private ramp:T.DataTexture,private eco:boolean,private seal?:T.Object3D) {
+  constructor(private scene:T.Scene,private own:Own,private ramp:T.DataTexture,private eco:boolean,private seal?:T.Object3D, theme?:WorldTheme) {
+    if(theme){this.themedSky=1;this.hazy.set(theme.fog);this.violet.set(theme.sky);this.pale.set(theme.restored);this.dark.set(theme.dormant);}
     const scenery=new T.Group();
     scene.add(scenery,this.fracture);
     this.sky=own(new T.ShaderMaterial({
       side:T.BackSide,depthWrite:false,
-      uniforms:{energy:{value:1},warm:{value:eco?.38:0},storm:{value:0}},
+      uniforms:{energy:{value:1},warm:{value:eco?.38:0},storm:{value:0},skyTint:{value:new T.Color(theme?.sky??"#ffffff")},tinted:{value:theme?1:0}},
       vertexShader:`varying vec3 direction;
         void main(){ direction=normalize(position); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
       fragmentShader:`
-        varying vec3 direction; uniform float energy, warm, storm;
+        varying vec3 direction; uniform float energy, warm, storm, tinted; uniform vec3 skyTint;
         void main(){
           vec3 d=normalize(direction);
           float h=smoothstep(-.16,.58,d.y);
@@ -43,6 +46,7 @@ export class FilmSet {
           zenith=mix(zenith,vec3(.20,.66,.51),warm);
           vec3 horizon=mix(vec3(.48,.50,.67),vec3(.73,.95,.92),energy);
           vec3 sky=mix(horizon,zenith,h);
+          sky=mix(sky,skyTint * (.55+h*.24+energy*.22),tinted*.65);
           vec3 sun=normalize(vec3(-.54,.43,-.76));
           float halo=pow(max(0.,dot(d,sun)),13.);
           float disk=smoothstep(.997,.999,dot(d,sun));
@@ -267,6 +271,10 @@ export class FilmSet {
       const shard=part(jewel,i%3===0?nullEdge:nullGlass,[0,0,0],[.13,.65,.08],this.fracture);
       shard.userData.theta=i*Math.PI*2/8;
     }
+  }
+
+  showRestoredWorld(active:boolean) {
+    this.sky.uniforms.tinted.value=active?0:this.themedSky;
   }
 
   showWarning(text:string) {

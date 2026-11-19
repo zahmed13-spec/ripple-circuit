@@ -1,3 +1,4 @@
+import { Biome } from "./biome";
 import { StoryEnvironment, type Environment } from "../story/environment";
 import * as T from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
@@ -15,6 +16,7 @@ export type Block = {
   d: number;
   rotation?: { x: number; y: number; z: number; w: number };
   kind?: string;
+  cycle?: { period: number; open: number; offset: number };
   switchId?: string;
 };
 export type SceneOrb = {
@@ -47,11 +49,14 @@ export class Arena3D {
   scene = new T.Scene();
   environment:T.CubeTexture|null=null;
   story?: StoryEnvironment;
+  private biome?:Biome;
+  private sceneryTime=0;
   private selection?: T.LineSegments;
   camera = new T.OrthographicCamera(-9, 9, 9, -9, 0.1, 100);
   root = new T.Group();
   orbs = new Map<number, T.Mesh>();
   labels = new Map<number, T.Sprite>();
+  bridges = new Map<string, T.Mesh>();
   gates = new Map<string, T.Mesh>();
   plates = new Map<string, T.Mesh>();
   targets = new Map<number, T.Mesh>();
@@ -71,6 +76,7 @@ export class Arena3D {
   slow = 0;
   autoSettled = false;
   lastDraw = 0;
+  private renderedFrames=0;
   native = false;
   targetCamera: T.Vector3 | null = null;
   private focus = new T.Vector3();
@@ -171,6 +177,7 @@ export class Arena3D {
     this.marker.visible = false;
     this.setData(data);
     if (data.story) this.story = new StoryEnvironment(this,data.story);
+    else this.biome=new Biome(this,"aero",data.blocks.length % 5,true);
     this.setQuality("auto");
     this.setCamera("isometric");
     canvas.addEventListener("webglcontextlost", this.loss);
@@ -228,7 +235,7 @@ export class Arena3D {
         !b.kind
           ? new RoundedBoxGeometry(b.w, b.h, b.d, 2, Math.min(0.08, b.h / 4))
           : new T.BoxGeometry(b.w, b.h, b.d),
-        b.kind === "gate"
+        b.kind === "bridge" ? "#61bc79" : b.kind === "gate"
           ? "#8f9bd5"
           : b.kind === "wall"
             ? "#a8dbe5"
@@ -251,12 +258,13 @@ export class Arena3D {
             0.04,
             Math.max(0.1, b.d - 0.08),
           ),
-          b.rotation ? "#83cebf" : "#bce4de",
+          data.story && data.story.theme.id!=="aero" ? data.story.theme.platform : b.rotation ? "#83cebf" : "#bce4de",
         );
         face.position.y = b.h / 2 + (data.story ? -0.016 : -0.02);
         m.add(face);
       }
-      if (b.kind === "gate") this.gates.set(b.id, m);
+      if (b.kind === "bridge") this.bridges.set(b.id, m);
+      else if (b.kind === "gate") this.gates.set(b.id, m);
       else if (b.kind !== "wall") {
         m.userData.id = b.id;
         this.surfaces.push(m);
@@ -532,6 +540,10 @@ export class Arena3D {
         );
     }
     for (const [id, m] of this.gates) m.visible = !opened.includes(id);
+    for (const [id, mesh] of this.bridges) {
+      mesh.scale.y = opened.includes(id) ? 1 : .12;
+      (mesh.material as T.MeshPhysicalMaterial).color.set(opened.includes(id) ? "#61bc79" : "#725686");
+    }
     for (const [id, m] of this.plates)
       (m.material as T.MeshPhysicalMaterial).color.set(
         activated.includes(id) ? "#70ce76" : "#a29ed6",
@@ -591,7 +603,7 @@ export class Arena3D {
       now - this.lastDraw < 150
     )
       return;
-    if(this.story && this.quality==="low" && !this.dirty && now-this.lastDraw<30) return;
+
     const visualDt=this.story&&this.lastDraw ? Math.min(.15,(now-this.lastDraw)/1000) : dt;
     this.lastDraw = now;
     this.dirty = false;
@@ -641,10 +653,15 @@ export class Arena3D {
     for(const block of this.blockers)block.traverse(object=>{if(object instanceof T.Mesh){const material=object.material as T.Material;const faded=obstructing.has(block);if(material.transparent!==faded){material.transparent=faded;material.needsUpdate=true;}material.opacity=faded?.22:1;material.depthWrite=!faded;}});
     this.canvas.dataset.occluded=String(obstructing.size);
     this.story?.animate(visualDt,reduced);
+    if(!reduced)this.sceneryTime+=visualDt;
+    this.biome?.animate(this.sceneryTime,reduced,this.quality);
+    const renderStart=performance.now();
     this.renderer.render(this.scene, this.camera);
+    this.canvas.dataset.renderMs=(performance.now()-renderStart).toFixed(2);
+    this.canvas.dataset.renderFrame=String(++this.renderedFrames);
     if (this.quality === "auto" && !this.autoSettled && dt > 0) {
       this.frames++;
-      if (dt > 0.03) this.slow++;
+      if (dt > 0.022) this.slow++;
       if (this.frames === 120) {
         this.autoSettled = true;
         if (this.slow > 30) this.setQuality("low");

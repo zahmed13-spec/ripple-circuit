@@ -1,3 +1,4 @@
+import { chapterHash, chapters } from "../story/chapters";
 import { html, characterContent } from "../content";
 import { Vector3 } from "three";
 import { Arena3D } from "../scene/arena";
@@ -8,7 +9,7 @@ import {
   replay3,
   validInputs,
   ENGINE,
-  STORY_ENGINE,
+  STORY_ENGINE, EXPANSION_ENGINE,
   surfaceY,
   summary,
   type Input,
@@ -52,7 +53,7 @@ export async function mountNative(
     referenceInputs = l.solution;
   const daily = code.startsWith("d");
   main.className = story ? "native-game story-game" : "native-game";
-  main.innerHTML = `<section class="native-layout"><aside class="intro"><div class="eyebrow">${daily ? "TODAY’S SPATIAL CIRCUIT" : html(l.chapter)}</div><h1>${html(l.title)}</h1><p>${html(l.hint)}</p>${story ? `<div class="story-guide"><span class="luma-face" aria-hidden="true"></span><div><strong>${html(characterContent.Luma.name)}</strong><p aria-live="polite"></p></div></div><p class="story-restore-status" id="story-restore-status"></p><a href="#story-aero" class="textlink">← Aero Haven chapter</a><p id="story-mechanisms" class="small"></p>${l.id===5?'<a class="textlink" href="#story-survey">Survey the aqueduct</a>':""}` : '<p class="small">Real gravity · 3D shockwaves · Local records</p><a href="#depth" class="textlink">Explore the floating islands →</a><p><a href="#daily">Classic Daily</a> · <a href="#daily3">3D Daily</a></p>'}<p id="native-countdown"></p></aside><section class="play-section"><div class="arena-top"><div><span class="eyebrow">${story ? `1-${l.id} · THE FRACTURED RIPPLE` : `${code} · PHYSICS 3`}</span><h2>${html(l.title)}</h2></div><span class="difficulty">${html(l.chapter)}</span></div><div class="hud"><div><span>PULSES LEFT</span><strong id="native-pulses"></strong></div><div><span>HOME</span><strong id="native-goals"></strong></div><div><span>TIME</span><strong id="native-time"></strong></div><div class="tools"><button id="native-pause" aria-label="Pause">Ⅱ</button><button id="native-retry" aria-label="Retry">↻</button></div></div><div class="arena-wrap"><canvas id="native-arena" tabindex="0" role="application" aria-label="3D circuit. Arrows aim on the selected surface, Enter pulses, Escape cancels or pauses, R retries."></canvas><div id="native-result" class="result" hidden aria-live="polite"></div></div><div id="native-controls"></div><div class="surface-control"><label>Aim surface <select id="surface"><option value="auto">Visible surface</option>${l.blocks
+  main.innerHTML = `<section class="native-layout"><aside class="intro"><div class="eyebrow">${daily ? "TODAY’S SPATIAL CIRCUIT" : html(l.chapter)}</div><h1>${html(l.title)}</h1><p>${html(l.hint)}</p>${story ? `<div class="story-guide"><span class="luma-face" aria-hidden="true"></span><div><strong>${html(characterContent.Luma.name)}</strong><p aria-live="polite"></p></div></div><p class="story-restore-status" id="story-restore-status"></p><a href="#${chapterHash(story.theme.id as Parameters<typeof chapterHash>[0])}" class="textlink">← ${html(l.chapter)} chapter</a><p id="story-mechanisms" class="small"></p>${l.version===4&&l.id===5?'<a class="textlink" href="#story-survey">Survey the aqueduct</a>':""}` : '<p class="small">Real gravity · 3D shockwaves · Local records</p><a href="#depth" class="textlink">Explore the floating islands →</a><p><a href="#daily">Classic Daily</a> · <a href="#daily3">3D Daily</a></p>'}<p id="native-countdown"></p></aside><section class="play-section"><div class="arena-top"><div><span class="eyebrow">${story ? `${chapters.findIndex(chapter=>chapter.theme===story.theme.id)+1}-${l.id} · THE FRACTURED RIPPLE` : `${code} · PHYSICS 3`}</span><h2>${html(l.title)}</h2></div><span class="difficulty">${html(l.chapter)}</span></div><div class="hud"><div><span>PULSES LEFT</span><strong id="native-pulses"></strong></div><div><span>HOME</span><strong id="native-goals"></strong></div><div><span>TIME</span><strong id="native-time"></strong></div><div class="tools"><button id="native-pause" aria-label="Pause">Ⅱ</button><button id="native-retry" aria-label="Retry">↻</button></div></div><div class="arena-wrap"><canvas id="native-arena" tabindex="0" role="application" aria-label="3D circuit. Arrows aim on the selected surface, Enter pulses, Escape cancels or pauses, R retries."></canvas><div id="native-result" class="result" hidden aria-live="polite"></div></div><div id="native-controls"></div><div class="surface-control"><label>Aim surface <select id="surface"><option value="auto">Visible surface</option>${l.blocks
     .filter((b) => !b.kind)
     .map(
       (b) =>
@@ -69,7 +70,7 @@ export async function mountNative(
   try {
     scene = new Arena3D(canvas, {
       ...l,native:true,
-      story:story && {theme:story.theme,currents:l.currents,stage:story.stage(),level:story.level.id},
+      story:story && {theme:story.theme,currents:[...l.currents??[],...l.gravityZones??[]],stage:story.stage(),level:story.level.id},
     });
   } catch {
     sim.dispose();
@@ -98,6 +99,18 @@ export async function mountNative(
         s.id[0].toUpperCase()+s.id.slice(1)+(sim.activated.includes(s.id)?": powered":": waiting")
       ).join(" · ");
     }
+    if(story && l!.version===6){
+      const timing=l!.blocks.filter(block=>block.cycle).map(block=>{
+        const {period,open,offset}=block.cycle!;
+        if(block.switchId&&!sim.activated.includes(block.switchId))return `${block.id} · waiting for receiver`;
+        const phase=(sim.tick+offset)%period;
+        return `${block.id} · ${phase<open?"open":"closed"} · ${((phase<open?open-phase:period-phase)/60).toFixed(1)}s`;
+      });
+      if(timing.length){
+        const switches=l!.switches.map(plate=>`${plate.id}: ${sim.activated.includes(plate.id)?"powered":"off"}`);
+        $("story-mechanisms").textContent=[...switches,...timing].join(" · ");
+      }
+    }
     const b = story ? story.best() : save.best[code];
     $("native-best").textContent = b
       ? `Personal best · ${b.pulses} pulses · ${(b.ticks / 60).toFixed(2)}s`
@@ -108,11 +121,13 @@ export async function mountNative(
         `UTC reset in ${Math.floor(secs / 3600)}h ${Math.floor(secs / 60) % 60}m · 12-puzzle rotation`;
     }
   }
+  let previousOrbs: Simulation["orbs"] = [];
   function reset() {
     cancel();
     scene.clearEffects();
     sim.dispose();
     sim = new Simulation(l!);
+    previousOrbs = [];
     playback = false;
     handled = false;
     acc = 0;
@@ -122,7 +137,7 @@ export async function mountNative(
     delete canvas.dataset.checkpoint;
     $("native-pause").textContent = "Ⅱ";
     $("native-instruction").textContent = l!.hint;
-    scene.update(sim.orbs, [], []);
+    scene.update(sim.orbs, sim.opened, sim.activated);
     feedback?.reset();
     hud();
   }
@@ -285,7 +300,7 @@ export async function mountNative(
     if (inputs)
       u.searchParams.set(
         "r",
-        btoa(JSON.stringify({ v: l!.version, e: story ? STORY_ENGINE : ENGINE, c: code, p: inputs })),
+        btoa(JSON.stringify({ v: l!.version, e: l!.version===6 ? EXPANSION_ENGINE : story ? STORY_ENGINE : ENGINE, c: code, p: inputs })),
       );
     return u.href;
   };
@@ -321,7 +336,7 @@ export async function mountNative(
     try {
       if (payload.length > 4096) throw Error();
       const r = JSON.parse(atob(payload));
-      if (r.v !== l.version || r.e !== (story ? STORY_ENGINE : ENGINE) || r.c !== code || !validInputs(l, r.p))
+      if (r.v !== l.version || r.e !== (l.version===6 ? EXPANSION_ENGINE : story ? STORY_ENGINE : ENGINE) || r.c !== code || !validInputs(l, r.p))
         throw Error();
       const verify = replay3(l, r.p);
       const valid = verify.status === "won",
@@ -427,6 +442,7 @@ export async function mountNative(
               if (sim.pulse(p, p.surface))
                 scene.pulse(new Vector3(p.x, p.y, p.z), true);
             }
+          if(sim.started && sim.status==="playing")previousOrbs=sim.orbs.map(orb=>({...orb}));
           sim.step();
           if(!playback&&sim.started)feedback?.observe(sim);
           if (sim.tick === 30)
@@ -436,7 +452,13 @@ export async function mountNative(
         }
         if (n >= 6) acc = 0;
       }
-      scene.update(sim.orbs, sim.opened, sim.activated);
+      const fraction=Math.min(1,acc*60);
+      const position=sim.started&&!sim.paused&&sim.status==="playing" ? sim.orbs.map((orb,i)=>{
+        const before=previousOrbs[i];
+        if(!before || orb.state!=="active" || before.state!=="active")return orb;
+        return {...orb,x:before.x+(orb.x-before.x)*fraction,y:before.y+(orb.y-before.y)*fraction,z:before.z+(orb.z-before.z)*fraction};
+      }) : sim.orbs;
+      scene.update(position, sim.opened, sim.activated);
       scene.draw(
         dt,
         save.settings.reduced || (story!==undefined && reducedMotion.matches),

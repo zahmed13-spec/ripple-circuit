@@ -137,7 +137,7 @@
 .sky-cloud { position:absolute; left:var(--x); top:var(--y); width:clamp(95px,16vw,245px); height:clamp(28px,5.4vw,84px); opacity:.58; border-radius:70% 65% 50% 52%; background:radial-gradient(ellipse at 33% 39%,white 4%,#f8ffffd9 47%,#cefaff00 72%); box-shadow:-2.5vw 1vw 2vw -1.3vw #e8fcffaa; animation:cloud-breeze var(--duration) var(--delay) ease-in-out infinite alternate; }
 .sky-cloud::before { content:""; position:absolute; inset:-35% 20% 15% 10%; border-radius:60%; background:radial-gradient(ellipse,#fff,#effdff80 50%,transparent 72%); }
 .sky-grass { position:absolute; bottom:0; width:100%; height:clamp(22px,8vh,92px); fill:#3d981e80; opacity:.72; }
-.sky-grass path { transform-origin:0 100px; animation:grass-breeze var(--sway) var(--delay) ease-in-out infinite; }
+.sky-grass path { transform-origin:0 0; animation:grass-breeze var(--sway) var(--delay) ease-in-out infinite; }
 .sky-grass g:nth-child(3n) { fill:#84d748ad; }
 .sky-bubble { position:absolute; top:var(--y); left:100%; width:var(--size); aspect-ratio:1; border-radius:50%; border:1px solid #f8ffffaf; box-shadow:inset 3px -4px 8px #8cf8e977,inset -4px 2px 7px #ba98f58c,1px 2px 12px #a9fff577; background:radial-gradient(ellipse at 29% 23%,#fff 0 3%,#fff9 4%,transparent 15%),radial-gradient(ellipse at 73% 81%,#e0ffffa0 0 3%,transparent 18%); animation:bubble-west var(--duration) var(--delay) linear infinite; }
 @keyframes cloud-breeze { from {transform:translate3d(-13vw,0,0)} to {transform:translate3d(12vw,-1.1vh,0)} }

@@ -1,3 +1,5 @@
+import { themes } from "../themes";
+import type { ExpansionWorld } from "../chapters";
 import * as T from "three";
 import type { Cast } from "./cast";
 import type { Shot } from "./boards";
@@ -20,13 +22,14 @@ export class FilmStage {
   private clipDuration=0;
   private mixer?:T.AnimationMixer;
   private width=0;
+  private renderedFrames=0;
   private height=0;
   private disposed=false;
   lost=false;
   private readonly onLost=(event:Event)=>{event.preventDefault();this.lost=true;};
   private readonly onRestored=()=>{this.lost=false;};
 
-  constructor(readonly canvas:HTMLCanvasElement, eco:boolean, quality:"low"|"medium"|"high",cast?:Cast) {
+  constructor(readonly canvas:HTMLCanvasElement, eco:boolean, quality:"low"|"medium"|"high",cast?:Cast, world?:ExpansionWorld) {
     this.renderer=new T.WebGLRenderer({canvas,antialias:quality!=="low",alpha:false,powerPreference:"low-power",preserveDrawingBuffer:true});
     this.quality=quality==="high"?1.6:quality==="medium"?1.25:1;
     this.world.fog=new T.Fog("#cfe9ec",16,52);
@@ -37,7 +40,7 @@ export class FilmStage {
     gradient.generateMipmaps=false;
     gradient.needsUpdate=true;
     if(cast)for(const resource of cast.resources)this.resources.add(resource);
-    this.set=new FilmSet(this.world,this.own,gradient,eco,cast?.seal);
+    this.set=new FilmSet(this.world,this.own,gradient,eco,cast?.seal,world ? themes[world] : undefined);
     this.luma=new LumaRig(this.own,gradient,cast);
     this.ripple=new RippleRig(this.own,gradient,cast);
     this.world.add(this.luma.object,this.ripple.object);
@@ -88,13 +91,17 @@ export class FilmStage {
     this.key.intensity=1.2+energy*1.3;
     this.key.color.setHex(energy>.8?0xfff1c3:0xe4f7ff);
     if(this.mixer)this.mixer.setTime((reduced?.32:phase*.98)*this.clipDuration);
+    this.set.showRestoredWorld(shot.id==="story-null-5-home");
     this.set.apply(shot.effect,energy,time,phase,reduced);
     const line=shot.line;
     this.set.showWarning(shot.id==="directive-2" && line && (reduced || time>=line.in) ? line.text : "");
     this.ripple.apply(pose.ripple,time,energy,reduced);
     this.luma.apply(pose.luma,this.camera,pose.ripple?this.ripple.object.position:this.focus,
       reduced?"–":mouthAt(shot,time),time,reduced);
+    const renderStart=performance.now();
     this.renderer.render(this.world,this.camera);
+    this.canvas.dataset.renderMs=(performance.now()-renderStart).toFixed(2);
+    this.canvas.dataset.renderFrame=String(++this.renderedFrames);
     this.canvas.dataset.luma=pose.luma[5];
     this.canvas.dataset.pose=pose.luma.slice(0,5).map(n=>Number(n).toFixed(3)).join(",");
     this.canvas.dataset.energy=energy.toFixed(2);

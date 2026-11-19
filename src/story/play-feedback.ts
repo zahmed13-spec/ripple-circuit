@@ -51,8 +51,8 @@ export class StoryFeedback {
     this.arena.story?.setStage(this.story.stage());
     this.arena.story?.setPhase(0);
     this.arena.story?.react("curious",undefined,Infinity);
-    this.line.textContent=circuits[this.story.level.id-1].before;
-    this.status.textContent=milestones[this.story.stage()].name;
+    this.line.textContent=this.story.level.version===4?circuits[this.story.level.id-1].before:this.story.level.narrative;
+    this.status.textContent=this.story.level.version===4?milestones[this.story.stage()].name:`${this.story.stage()} of 5 circuits restored`;
     this.soundtrack.set(this.story.stage());
   }
   pulse(point:Vector3) {
@@ -76,7 +76,7 @@ export class StoryFeedback {
       };
       this.line.textContent=lines[id]??"The channel is powered.";
     }
-    if (!this.enteredCurrent && this.story.level.id===2) {
+    if (!this.enteredCurrent && this.story.level.version===4 && this.story.level.id===2) {
       const current=sim.level.currents?.find(c=>currentActive(c,sim.activated)&&sim.orbs.some(o=>o.state==="active"&&inCurrent(c,o,o.radius)));
       if(current){
         this.enteredCurrent=true;
@@ -101,13 +101,13 @@ export class StoryFeedback {
       return;
     }
     this.arena.story?.setStage(this.story.stage(),firstClear&&this.story.stage()===5?"echo":"");
-    this.status.textContent=milestones[this.story.stage()].name;
+    this.status.textContent=this.story.level.version===4?milestones[this.story.stage()].name:`${this.story.stage()} of 5 circuits restored`;
     this.soundtrack.set(this.story.stage(),this.activated);
     const beat=circuits[this.story.level.id-1];
     this.arena.story?.react(firstClear?beat.mood:"celebrating",undefined,3);
     if(firstClear){
-      this.line.textContent=beat.after;
-      if(this.story.level.id===3){
+      this.line.textContent=this.story.level.version===4?beat.after:"This connection is restored.";
+      if(this.story.level.version===4&&this.story.level.id===3){
         this.directive.textContent=beat.fragment;
         this.directive.hidden=false;
       }
