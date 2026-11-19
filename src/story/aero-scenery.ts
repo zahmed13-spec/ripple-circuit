@@ -15,8 +15,9 @@ export class AeroScenery {
   private readonly batches = new Map<string, {shape: Shape; paint: Paint; detail: Detail; matrices: T.Matrix4[]}>();
   private readonly layers = [new T.Group(), new T.Group(), new T.Group()];
   private readonly wheels: T.Group[] = [];
-  private readonly cascades: {mesh: T.InstancedMesh; falls: {x: number; top: number; z: number; height: number; width: number}[]} =
-    {mesh: undefined!, falls: []};
+  private readonly falls: {x: number; top: number; z: number; height: number; width: number}[] = [];
+  private foam?: T.InstancedMesh;
+  private stillFoamDensity = 0;
   private readonly dropTransform = new T.Matrix4();
   private readonly lit = new T.Color("#84ffe0");
   private readonly quiet = new T.Color("#518699");
@@ -57,12 +58,12 @@ export class AeroScenery {
     }
     this.batches.clear();
 
-    if (this.cascades.falls.length) {
+    if (this.falls.length) {
       const foam = arena.own(new T.MeshBasicMaterial({color: "#dbffff", transparent: true, opacity: .78, depthWrite: false}));
-      const mesh = arena.own(new T.InstancedMesh(this.geometry.box, foam, this.cascades.falls.length * 6));
+      const mesh = arena.own(new T.InstancedMesh(this.geometry.box, foam, this.falls.length * 6));
       mesh.instanceMatrix.setUsage(T.DynamicDrawUsage);
       mesh.frustumCulled = false;
-      this.cascades.mesh = mesh;
+      this.foam = mesh;
       this.layers[1].add(mesh);
       this.animate(0, false, "medium");
     }
@@ -94,7 +95,7 @@ export class AeroScenery {
 
   private spill(x: number, top: number, z: number, height: number, width: number) {
     this.part("box", "water", [x, top - height / 2, z], [width, height, .17]);
-    this.cascades.falls.push({x, top, z, height, width});
+    this.falls.push({x, top, z, height, width});
   }
 
   private arch(x: number, y: number, z: number, radius: number, detail: Detail = 0) {
@@ -218,17 +219,20 @@ export class AeroScenery {
     this.wheels.forEach((wheel, i) => {
       wheel.rotation.z = reduced ? 0 : time * this.energy * .65 + i * .2;
     });
-    if (!this.cascades.mesh) return;
+    const foam = this.foam;
+    if (!foam) return;
     const count = quality === "high" ? 6 : 3;
-    this.cascades.falls.forEach(({x, top, z, height, width}, fall) => {
+    if (reduced && this.stillFoamDensity === count) return;
+    this.stillFoamDensity = reduced ? count : 0;
+    this.falls.forEach(({x, top, z, height, width}, fall) => {
       for (let i = 0; i < count; i++) {
         const phase = (i * .173 + fall * .249 + (reduced ? 0 : time * (.3 + this.energy * .35))) % 1;
         this.dropTransform.makeScale(.035 + width * .025, .32, .015);
         this.dropTransform.setPosition(x + (i / (count - 1) - .5) * width * .78, top - height * phase, z + .10);
-        this.cascades.mesh.setMatrixAt(fall * count + i, this.dropTransform);
+        foam.setMatrixAt(fall * count + i, this.dropTransform);
       }
     });
-    this.cascades.mesh.count = this.cascades.falls.length * count;
-    this.cascades.mesh.instanceMatrix.needsUpdate = true;
+    foam.count = this.falls.length * count;
+    foam.instanceMatrix.needsUpdate = true;
   }
 }

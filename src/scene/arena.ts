@@ -138,18 +138,18 @@ export class Arena3D {
     });
     this.sun.shadow.bias = -0.001;
     this.scene.add(this.sun);
-    const ocean = this.mesh(
-      new T.CylinderGeometry(25, 25, 0.12, 64),
-      "#55c9d7",
-    );
-    ocean.position.y = -3.5;
-    if(!data.story)this.scene.add(ocean);
+    if (!data.story) {
+      const ocean = this.mesh(new T.CylinderGeometry(25, 25, .12, 64), "#55c9d7");
+      ocean.position.y = -3.5;
+      this.scene.add(ocean);
+    }
+    const firstCloud = this.mesh(new T.SphereGeometry(1, 12, 8), "#f4fdff");
     for (let i = 0; i < 7; i++) {
-      const cloud = this.mesh(new T.SphereGeometry(1, 12, 8), "#f4fdff");
-      cloud.scale.set(2.2, 0.35, 1);
-      cloud.position.set((i - 3) * 7, -0.8, -13 - Math.abs(i - 3));
+      const cloud = i === 0 ? firstCloud : firstCloud.clone();
+      cloud.scale.set(2.2, .35, 1);
+      cloud.position.set((i - 3) * 7, -.8, -13 - Math.abs(i - 3));
+      if (data.story) cloud.userData.cloudX = cloud.position.x;
       this.scene.add(cloud);
-      if(data.story)cloud.userData.cloudX=cloud.position.x;
     }
     this.preview = this.mesh(
       data.native
@@ -627,15 +627,16 @@ export class Arena3D {
     this.waves = this.waves.filter((w) => w.age < 0.6);
     // Fade only structures lying in front of a marble or receiving ring.
     // The physical collider and surface picker remain unchanged.
-    this.scene.updateMatrixWorld(true);
+    const visibleBlockers=this.blockers.filter(mesh=>mesh.visible);
+    if(visibleBlockers.length)this.scene.updateMatrixWorld(true);
     const obstructing=new Set<T.Mesh>();
     const ray=new T.Raycaster();
-    const points=[...this.orbs.values(),...this.targets.values()].filter(m=>m.visible).map(m=>m.position);
+    const points=visibleBlockers.length ? [...this.orbs.values(),...this.targets.values()].filter(m=>m.visible).map(m=>m.position) : [];
     for(const point of points){
       const projected=point.clone().project(this.camera);
       ray.setFromCamera(new T.Vector2(projected.x,projected.y),this.camera);
       const distance=ray.ray.origin.distanceTo(point);
-      for(const hit of ray.intersectObjects(this.blockers.filter(m=>m.visible),false))if(hit.distance<distance-.12)obstructing.add(hit.object as T.Mesh);
+      for(const hit of ray.intersectObjects(visibleBlockers,false))if(hit.distance<distance-.12)obstructing.add(hit.object as T.Mesh);
     }
     for(const block of this.blockers)block.traverse(object=>{if(object instanceof T.Mesh){const material=object.material as T.Material;const faded=obstructing.has(block);if(material.transparent!==faded){material.transparent=faded;material.needsUpdate=true;}material.opacity=faded?.22:1;material.depthWrite=!faded;}});
     this.canvas.dataset.occluded=String(obstructing.size);
@@ -650,6 +651,7 @@ export class Arena3D {
       }
     }
     this.canvas.dataset.resources = JSON.stringify(this.renderer.info.memory);
+    if(this.story)this.canvas.dataset.drawCalls=String(this.renderer.info.render.calls);
   }
   clearEffects(){for(const wave of this.waves){this.scene.remove(wave.mesh);this.release(wave.mesh);}this.waves=[];this.aim(null);this.dirty=true;}
   screenshot() {
