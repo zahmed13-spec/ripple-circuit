@@ -1,0 +1,184 @@
+{
+  "films": [
+    {
+      "id": "story-intro",
+      "title": "The Last Spark",
+      "shots": [
+        {
+          "id": "intro-1",
+          "label": "The Current in full song"
+        },
+        {
+          "id": "intro-2",
+          "label": "The fracture"
+        },
+        {
+          "id": "intro-3",
+          "label": "The silence"
+        },
+        {
+          "id": "intro-4",
+          "label": "Something moves"
+        },
+        {
+          "id": "intro-5",
+          "label": "The first connection"
+        }
+      ]
+    },
+    {
+      "id": "story-beacon",
+      "title": "The First Beacon",
+      "shots": [
+        {
+          "id": "beacon-1",
+          "label": "An answering light"
+        },
+        {
+          "id": "beacon-2",
+          "label": "Follow the conduit"
+        },
+        {
+          "id": "beacon-3",
+          "label": "The light has somewhere to go"
+        }
+      ]
+    },
+    {
+      "id": "story-reservoir",
+      "title": "The Reservoir Awakens",
+      "shots": [
+        {
+          "id": "reservoir-1",
+          "label": "A thin stream"
+        },
+        {
+          "id": "reservoir-2",
+          "label": "The reservoir spills"
+        },
+        {
+          "id": "reservoir-3",
+          "label": "Below the terrace"
+        }
+      ]
+    },
+    {
+      "id": "story-directive",
+      "title": "The Stability Directive",
+      "shots": [
+        {
+          "id": "directive-1",
+          "label": "Glass under the silt"
+        },
+        {
+          "id": "directive-2",
+          "label": "The old command"
+        },
+        {
+          "id": "directive-3",
+          "label": "Someone shut them down"
+        },
+        {
+          "id": "directive-4",
+          "label": "An unfamiliar memory"
+        }
+      ]
+    },
+    {
+      "id": "story-memory",
+      "title": "Luma’s Memory",
+      "shots": [
+        {
+          "id": "memory-1",
+          "label": "A familiar chime"
+        },
+        {
+          "id": "memory-2",
+          "label": "Once, we moved together"
+        },
+        {
+          "id": "memory-3",
+          "label": "The missing thought"
+        },
+        {
+          "id": "memory-4",
+          "label": "The Crown still calls"
+        }
+      ]
+    },
+    {
+      "id": "story-survey",
+      "title": "Guardian of the Aqueduct",
+      "shots": [
+        {
+          "id": "survey-1",
+          "label": "Three parts of one machine"
+        },
+        {
+          "id": "survey-2",
+          "label": "Intake"
+        },
+        {
+          "id": "survey-3",
+          "label": "Relay"
+        },
+        {
+          "id": "survey-4",
+          "label": "Crown"
+        },
+        {
+          "id": "survey-5",
+          "label": "Together"
+        }
+      ]
+    },
+    {
+      "id": "story-restored",
+      "title": "The Water Returns",
+      "shots": [
+        {
+          "id": "restored-1",
+          "label": "The last receiver"
+        },
+        {
+          "id": "restored-2",
+          "label": "The Crown rises"
+        },
+        {
+          "id": "restored-3",
+          "label": "I'm glad you found me"
+        },
+        {
+          "id": "restored-4",
+          "label": "A signal from the canopy"
+        },
+        {
+          "id": "restored-5",
+          "label": "The next journey"
+        }
+      ]
+    },
+    {
+      "id": "story-eco",
+      "title": "Beyond the Canopy",
+      "shots": [
+        {
+          "id": "eco-1",
+          "label": "First contact"
+        },
+        {
+          "id": "eco-2",
+          "label": "A reach cut short"
+        },
+        {
+          "id": "eco-3",
+          "label": "Held still"
+        },
+        {
+          "id": "eco-4",
+          "label": "Chapter 2 · Eco Canopy · Coming next"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "worlds": [
+    {
+      "id": "aero",
+      "title": "Aero Haven",
+      "subtitle": "The aqueduct has gone quiet.",
+      "objective": "Reconnect the water network and light the central crystal.",
+      "mechanic": "Directional water currents",
+      "accent": "#087d93",
+      "sky": "#bdeafa"
+    },
+    {
+      "id": "eco",
+      "title": "Eco Canopy",
+      "subtitle": "A botanical network waits for power.",
+      "objective": "Wake the forest and reconnect its living architecture.",
+      "mechanic": "Living bridges",
+      "accent": "#357547",
+      "sky": "#dff4b6"
+    },
+    {
+      "id": "terra",
+      "title": "Terra Core",
+      "subtitle": "The deep stabilizers are off balance.",
+      "objective": "Restore the gravitational stabilizer.",
+      "mechanic": "Gravity control",
+      "accent": "#95512b",
+      "sky": "#f1d3a4"
+    },
+    {
+      "id": "metro",
+      "title": "Metro Pulse",
+      "subtitle": "The transit grid has lost its rhythm.",
+      "objective": "Bring the transit circuits back into sync.",
+      "mechanic": "Timed machinery",
+      "accent": "#374dc2",
+      "sky": "#d8edff"
+    },
+    {
+      "id": "null",
+      "title": "The Null Zone",
+      "subtitle": "Something is still listening in the dark.",
+      "objective": "Discover NULL's origin and reconnect the Current.",
+      "mechanic": "Corrupted circuits",
+      "accent": "#b94175",
+      "sky": "#282346"
+    }
+  ]
+}

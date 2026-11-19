@@ -1,3 +1,4 @@
+import { html } from "../content";
 import type { Save } from "../services/storage";
 import { motif } from "../services/audio";
 import { isStoryId, storyLink } from "./chapters";
@@ -26,10 +27,10 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
   main.className=`story-screen ${options.largeText?"living-large-text":""}`;
   main.innerHTML=`<section class="story-page living-cinematic film-page ${isEco?"living-eco":""}">
     <div class="film-heading"><div><a href="#story-aero" class="story-back">← Aero Haven</a>
-    <p class="eyebrow">${film.chapter}</p><h1>${film.title}</h1></div>
+    <p class="eyebrow">${html(film.chapter)}</p><h1>${html(film.title)}</h1></div>
     <span>Animated story<br>Subtitles</span></div>
     <div class="film-frame">
-      <canvas role="img" aria-label="${film.title}, an original cel-shaded animated scene"></canvas>
+      <canvas role="img" aria-label="${html(film.title)}, an original cel-shaded animated scene"></canvas>
       <div class="film-preview-label" id="film-fallback" hidden>Animation unavailable. Read the scene below.</div>
       <div class="film-dip" aria-hidden="true"></div>
       <div class="film-lettering"><span id="shot-position"></span><strong id="shot-label"></strong></div>
@@ -44,7 +45,7 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
       <button type="button" id="story-scene-music" aria-pressed="${options.music}">${options.music?"Enable sound":"Music"}</button>
     </div>
     <div class="story-actions film-actions"><button type="button" class="primary" id="story-scene-skip">Skip scene</button>
-      <details><summary>Read transcript</summary><ol>${film.shots.map(shot=>`<li><strong>${shot.label}</strong>${shot.line?`<p><b>${shot.line.speaker}:</b> ${shot.line.text}</p>`:""}</li>`).join("")}</ol></details>
+      <details><summary>Read transcript</summary><ol>${film.shots.map(shot=>`<li><strong>${html(shot.label)}</strong>${shot.line?`<p><b>${html(shot.line.speaker)}:</b> ${html(shot.line.text)}</p>`:""}</li>`).join("")}</ol></details>
     </div></section>`;
   const $=<T extends HTMLElement>(id:string)=>main.querySelector<T>("#"+id)!;
   const canvas=main.querySelector("canvas")!;
