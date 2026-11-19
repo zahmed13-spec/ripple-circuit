@@ -3,225 +3,225 @@
     {
       "id": "intro-1",
       "speaker": "Luma",
-      "text": "Before the silence, every island carried a little piece of the Current. Do you hear it? The water used to sing.",
-      "start": 0.7,
+      "text": "Every island carried the Current. The water used to sing.",
+      "start": 0.5,
       "emotion": "thoughtful"
     },
     {
       "id": "intro-2",
       "speaker": "Luma",
       "text": "Wait. The aqueduct went quiet. No… not the Crown.",
-      "start": 0.7,
+      "start": 0.5,
       "emotion": "concerned"
     },
     {
       "id": "intro-3",
       "speaker": "Luma",
-      "text": "Everything stopped. I kept waiting for the lights to come back.",
-      "start": 1.45,
+      "text": "I kept waiting for the lights to come back.",
+      "start": 0.5,
       "emotion": "thoughtful"
     },
     {
       "id": "intro-4",
       "speaker": "Luma",
-      "text": "Huh? You're still here? I'm Luma. Maybe we can help each other.",
-      "start": 0.7,
+      "text": "You're still here! I'm Luma. Let's help each other.",
+      "start": 2.1,
       "emotion": "curious"
     },
     {
       "id": "intro-5",
       "speaker": "Luma",
-      "text": "See that receiver? If we can wake one connection, maybe the rest aren't lost.",
-      "start": 0.7,
+      "text": "See that receiver? Let's wake the first connection.",
+      "start": 0.5,
       "emotion": "determined"
     },
     {
       "id": "beacon-1",
       "speaker": "Luma",
       "text": "It worked!",
-      "start": 0.7,
+      "start": 1.05,
       "emotion": "excited"
     },
     {
       "id": "beacon-2",
       "speaker": "Luma",
       "text": "Look! The light is traveling again.",
-      "start": 0.7,
+      "start": 0.5,
       "emotion": "relieved"
     },
     {
       "id": "beacon-3",
       "speaker": "Luma",
-      "text": "Come on. Let's find out where it goes.",
-      "start": 0.7,
+      "text": "It's heading to the reservoir. Come on!",
+      "start": 0.5,
       "emotion": "excited"
     },
     {
       "id": "reservoir-1",
       "speaker": "Luma",
       "text": "I remember this place.",
-      "start": 0.7,
+      "start": 0.5,
       "emotion": "thoughtful"
     },
     {
       "id": "reservoir-2",
       "speaker": "Luma",
-      "text": "The water used to reach the gardens from here. I thought we'd never hear it again.",
-      "start": 0.7,
+      "text": "The gardens used to get their water from here.",
+      "start": 0.5,
       "emotion": "curious"
     },
     {
       "id": "reservoir-3",
       "speaker": "Luma",
-      "text": "There's another connection underneath us. Let's see where it leads.",
-      "start": 0.7,
+      "text": "There's a connection below us. Follow me.",
+      "start": 0.5,
       "emotion": "curious"
     },
     {
       "id": "directive-1",
       "speaker": "Luma",
-      "text": "That's the mark from the lower channel. Will it still answer?",
-      "start": 0.7,
+      "text": "The mark from the lower channel. The terminal still works!",
+      "start": 0.5,
       "emotion": "neutral"
     },
     {
       "id": "directive-2",
       "speaker": "System",
-      "text": "STABILITY DIRECTIVE ACTIVE. FLOW INTERRUPTED TO PREVENT INSTABILITY.",
-      "start": 1.0,
+      "text": "Stability directive active. Flow halted to prevent instability.",
+      "start": 0.75,
       "emotion": "neutral"
     },
     {
       "id": "directive-3",
       "speaker": "Luma",
-      "text": "Prevent instability? These weren't all broken. Someone shut them down.",
-      "start": 0.7,
+      "text": "It wasn't an accident. Someone shut it down.",
+      "start": 0.5,
       "emotion": "concerned"
     },
     {
       "id": "directive-4",
       "speaker": "Luma",
-      "text": "I don't remember that symbol. But I think I've seen it before.",
-      "start": 0.7,
+      "text": "That symbol… I've seen it before.",
+      "start": 0.5,
       "emotion": "concerned"
     },
     {
       "id": "memory-1",
       "speaker": "Luma",
       "text": "I remember that sound.",
-      "start": 0.7,
+      "start": 1.05,
       "emotion": "thoughtful"
     },
     {
       "id": "memory-2",
       "speaker": "Luma",
-      "text": "It meant the whole system was connected. There were lights everywhere.",
-      "start": 0.7,
+      "text": "Everything used to move together.",
+      "start": 0.5,
       "emotion": "thoughtful"
     },
     {
       "id": "memory-3",
       "speaker": "Luma",
-      "text": "But there's something else… something I can't remember.",
-      "start": 0.7,
+      "text": "Something's missing. I can't remember what.",
+      "start": 0.5,
       "emotion": "neutral"
     },
     {
       "id": "memory-4",
       "speaker": "Luma",
-      "text": "Whatever happened started there.",
-      "start": 0.7,
+      "text": "Whatever happened started at the Crown.",
+      "start": 0.5,
       "emotion": "concerned"
     },
     {
       "id": "survey-1",
       "speaker": "Luma",
-      "text": "This is the heart of Aero Haven. Three connections feed it.",
-      "start": 0.7,
+      "text": "That's the heart of Aero Haven.",
+      "start": 0.5,
       "emotion": "determined"
     },
     {
       "id": "survey-2",
       "speaker": "Luma",
-      "text": "The intake sends water into the relay.",
-      "start": 0.7,
+      "text": "The intake sends water to the relay.",
+      "start": 0.5,
       "emotion": "neutral"
     },
     {
       "id": "survey-3",
       "speaker": "Luma",
-      "text": "The relay carries that energy to the Crown.",
-      "start": 0.7,
+      "text": "The relay powers the Crown.",
+      "start": 0.5,
       "emotion": "neutral"
     },
     {
       "id": "survey-4",
       "speaker": "Luma",
-      "text": "If all three wake, the islands get power. Something still wants them asleep.",
-      "start": 0.7,
+      "text": "Wake the Crown and the islands get power.",
+      "start": 0.5,
       "emotion": "concerned"
     },
     {
       "id": "survey-5",
       "speaker": "Luma",
-      "text": "Then we'll wake them together.",
-      "start": 0.7,
+      "text": "Let's wake it together.",
+      "start": 0.5,
       "emotion": "determined"
     },
     {
       "id": "restored-1",
       "speaker": "Luma",
-      "text": "Intake… relay… Crown!",
-      "start": 0.7,
+      "text": "Intake. Relay. Crown!",
+      "start": 0.5,
       "emotion": "determined"
     },
     {
       "id": "restored-2",
       "speaker": "Luma",
-      "text": "We did it. We actually brought it back.",
-      "start": 0.7,
+      "text": "We did it! The water's back!",
+      "start": 1.55,
       "emotion": "relieved"
     },
     {
       "id": "restored-3",
       "speaker": "Luma",
-      "text": "I thought I was the only one left. I'm glad you found me.",
-      "start": 0.7,
+      "text": "I'm glad you found me.",
+      "start": 0.5,
       "emotion": "neutral"
     },
     {
       "id": "restored-4",
       "speaker": "System",
-      "text": "UNCONTROLLED GROWTH DETECTED.",
-      "start": 1.0,
+      "text": "Uncontrolled growth detected.",
+      "start": 0.55,
       "emotion": "neutral"
     },
     {
       "id": "restored-5",
       "speaker": "Luma",
-      "text": "That's coming from Eco Canopy. The Current is still out there. And I don't think we're finished.",
-      "start": 0.7,
+      "text": "Eco Canopy. Something's wrong.",
+      "start": 0.5,
       "emotion": "concerned"
     },
     {
       "id": "eco-1",
       "speaker": "Luma",
       "text": "Look at this place. The forest isn't dead.",
-      "start": 0.7,
+      "start": 0.5,
       "emotion": "curious"
     },
     {
       "id": "eco-2",
       "speaker": "Luma",
       "text": "It's trying to grow.",
-      "start": 0.7,
+      "start": 0.5,
       "emotion": "thoughtful"
     },
     {
       "id": "eco-3",
       "speaker": "Luma",
       "text": "Something won't let it.",
-      "start": 0.7,
+      "start": 0.5,
       "emotion": "concerned"
     }
   ]
