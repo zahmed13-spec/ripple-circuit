@@ -37,7 +37,7 @@ const fixed=(n:number):Track<number>=>[[0,n]];
 const H=(x:number,y:number,z:number):Pose=>P(x,y,z,0,1,"neutral");
 const stage=(id:string,seconds:number,lens:Shot["lens"],effect:Effect,power:Track<number>,luma:Track<Pose>,
   ripple?:Track<Pose>,line?:ReturnType<typeof dialogueLine>,cue?:Shot["cue"]):Shot=>({id,label:shotContent[id].label,seconds,lens,effect,power,luma,ripple,
-  line:line?{...line,speaker:characterContent[line.speaker].name,in:line.start,out:seconds-.28}:undefined,cue});
+  line:line?{...line,speaker:characterContent[line.speaker]?.name ?? line.speaker,in:line.start,out:seconds-.28}:undefined,cue});
 const vista=V([0,1,-2],[10,7,13],42);
 const landing=V([-.5,.95,.35],[4,2.7,8],34);
 const crown=V([-1,2,-6.1],[3,2.5,8],31);

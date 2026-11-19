@@ -50,6 +50,7 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
     </div></section>`;
   const $=<T extends HTMLElement>(id:string)=>main.querySelector<T>("#"+id)!;
   const canvas=main.querySelector("canvas")!;
+  const filmFrame=main.querySelector<HTMLElement>(".film-frame")!;
   const offsets:number[]=[];
   let runtime=0;
   for(const shot of film.shots){offsets.push(runtime);runtime+=shot.seconds;}
@@ -130,7 +131,7 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
   function setPaused(value:boolean) {
     paused=value;
     toggle.textContent=ended?"Replay":value?"Play":"Pause";
-    main.querySelector(".film-frame")!.setAttribute("data-paused",String(value));
+    filmFrame.dataset.paused=String(value);
     if(value){
       cancelAnimationFrame(frame);
       frame=0;
@@ -196,7 +197,10 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
     if(!paused)frame=requestAnimationFrame(loop);
   }
   const resize=()=>refresh(true);
-  canvas.addEventListener("webglcontextlost",()=>{fallback.hidden=false;setPaused(true);refresh(true);});
+  const contextLost=()=>{fallback.hidden=false;setPaused(true);};
+  const contextRestored=()=>{fallback.hidden=true;refresh(true);};
+  canvas.addEventListener("webglcontextlost",contextLost);
+  canvas.addEventListener("webglcontextrestored",contextRestored);
   const motionChanged=()=>{
     if(reduced())setPaused(true);
     resize();
@@ -215,6 +219,8 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
       window.removeEventListener("resize",resize);
       document.removeEventListener("visibilitychange",resetClock);
       viewportMotion.removeEventListener("change",motionChanged);
+      canvas.removeEventListener("webglcontextlost",contextLost);
+      canvas.removeEventListener("webglcontextrestored",contextRestored);
       renderer?.dispose();
       soundscape.dispose();
     },
