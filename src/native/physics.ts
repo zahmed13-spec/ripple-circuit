@@ -1,3 +1,4 @@
+import { liftOffset } from "./machinery";
 import R from "@dimforge/rapier3d-compat";
 import type { Block, SceneData, SceneOrb } from "../scene/arena";
 export const ready = R.init();
@@ -55,8 +56,9 @@ export function validate(l: NativeLevel) {
       errors.push("rotation");
     if ((b.kind === "gate" || b.kind === "bridge") && !b.cycle && !l.switches.some((s) => s.id === b.switchId))
       errors.push("gate");
-    if ((b.cycle || b.kind === "bridge") && l.version !== 6) errors.push("expansion mechanism");
+    if ((b.cycle || b.lift || b.kind === "bridge") && l.version !== 6) errors.push("expansion mechanism");
     if (b.cycle && (b.kind !== "gate" || !Object.values(b.cycle).every(Number.isInteger) || b.cycle.period < 2 || b.cycle.open < 1 || b.cycle.open >= b.cycle.period || b.cycle.offset < 0)) errors.push("gate cycle");
+    if (b.lift && (b.kind !== "lift" || !Number.isInteger(b.lift.period) || !Number.isInteger(b.lift.hold) || !Number.isInteger(b.lift.offset) || b.lift.hold < 1 || b.lift.period <= b.lift.hold || b.lift.offset < 0 || !finite(b.lift.distance) || b.lift.distance<=0 || b.lift.distance>2)) errors.push("lift cycle");
   }
   for (const o of l.orbs) {
     if (!finite(o.x, o.y, o.z, o.radius) || o.radius <= 0 || o.radius > 1)
@@ -92,6 +94,8 @@ export class Simulation {
   bodies: R.RigidBody[] = [];
   gates = new Map<string, R.Collider>();
   bridges = new Map<string, R.Collider>();
+  lifts = new Map<string, {block:Block; body:R.RigidBody}>();
+  liftHeights=new Map<string,number>();
   sensors = new Map<string, R.Collider>();
   orbs: SceneOrb[];
   tick = 0;
@@ -118,6 +122,14 @@ export class Simulation {
         .setFriction(0.4)
         .setRestitution(0.25);
       if (b.rotation) c = c.setRotation(b.rotation);
+      if(b.lift){
+        const y=b.y+liftOffset(b.lift,0);
+        const body=this.world.createRigidBody(R.RigidBodyDesc.kinematicPositionBased().setTranslation(b.x,y,b.z));
+        this.world.createCollider(c.setTranslation(0,0,0),body);
+        this.lifts.set(b.id,{block:b,body});
+        this.liftHeights.set(b.id,y);
+        continue;
+      }
       const collider = this.world.createCollider(c);
       if (b.kind === "gate") this.gates.set(b.id, collider);
       if (b.kind === "bridge") {
@@ -228,6 +240,11 @@ export class Simulation {
           });
         }
       }
+      for(const [id,{block,body}] of this.lifts){
+        const y=block.y+liftOffset(block.lift!,this.tick-.5+k*.5);
+        body.setNextKinematicTranslation({x:block.x,y,z:block.z});
+        this.liftHeights.set(id,y);
+      }
       this.world.step(this.queue);
       this.queue.drainCollisionEvents((_a, _b, started) => {
         if (started && !this.events.includes("hit")) this.events.push("hit");
@@ -325,7 +342,7 @@ export function surfaceY(b: Block, x: number, z: number) {
 export function validPoint(l: NativeLevel, p: Vec, id: string) {
   if (![p.x, p.y, p.z].every(Number.isFinite)) return false;
   const b = l.blocks.find(
-    (b) => b.id === id && b.kind !== "gate" && b.kind !== "wall" && b.kind !== "bridge",
+    (b) => b.id === id && b.kind !== "gate" && b.kind !== "wall" && b.kind !== "bridge" && b.kind !== "lift",
   );
   if (!b) return false;
   const q = b.rotation || { x: 0, y: 0, z: 0, w: 1 };

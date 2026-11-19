@@ -71,5 +71,11 @@ export async function openStory(main:HTMLElement, route:string, save:Save, stora
   }
 }
 
-const loadChapter = async (world:typeof aero.theme) => world==="aero" ? (await import("./levels")).storyLevels :
-  (await import("./expansion-levels")).expansionLevels[world];
+const chapterLoaders={
+  aero:()=>import("./levels").then(module=>module.storyLevels),
+  eco:()=>import("./worlds/eco").then(module=>module.ecoLevels),
+  terra:()=>import("./worlds/terra").then(module=>module.terraLevels),
+  metro:()=>import("./worlds/metro").then(module=>module.metroLevels),
+  null:()=>import("./worlds/null").then(module=>module.nullLevels),
+};
+const loadChapter = (world:typeof aero.theme) => chapterLoaders[world]();

@@ -50,7 +50,7 @@ describe("Fractured World",()=>{
       expect(recordStory(save,level.storyId,{...score,pulses:result.used,ticks:result.tick})).toBe(true);
       result.dispose();
     }
-    const migrated=loadStory({getItem:()=>JSON.stringify(save)});
+    const migrated=loadStory({getItem:key=>key.endsWith("-v2")?JSON.stringify(save):JSON.stringify({version:1,best})});
     expect(campaignCompleted(migrated)).toBe(25);
     expect(storyStage(migrated,"null-5")).toBe(5);
     expect(migrated.best["aero-5"]).toEqual(score);
@@ -96,6 +96,21 @@ describe("Fractured World",()=>{
       while(sim.tick<211 && sim.status==="playing")sim.step();
       expect(sim.tick).toBe(211);
       expect(gate.isEnabled()).toBe(false);
+    } finally {sim.dispose();}
+  });
+
+  test("the Metro lift carries a kinematic collider across its schedule",()=>{
+    const level=expansionLevels.metro[3];
+    const sim=new Simulation(level);
+    try {
+      const lift=sim.lifts.get("lane-3-lift")!;
+      const initial=lift.body.translation().y;
+      sim.pulse(level.solution[0],"lane-1");
+      while(sim.tick<195)sim.step();
+      expect(lift.body.translation().y).toBeLessThan(initial-1);
+      expect(lift.body.translation().y).toBeCloseTo(sim.liftHeights.get("lane-3-lift")!,5);
+      while(sim.tick<240)sim.step();
+      expect(lift.body.translation().y).toBeCloseTo(initial,5);
     } finally {sim.dispose();}
   });
 

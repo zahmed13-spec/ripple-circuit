@@ -106,6 +106,9 @@ export async function mountNative(
         const phase=(sim.tick+offset)%period;
         return `${block.id} · ${phase<open?"open":"closed"} · ${((phase<open?open-phase:period-phase)/60).toFixed(1)}s`;
       });
+      for(const block of l!.blocks){
+        if(block.lift)timing.push(`Transfer lift · ${Math.abs((sim.liftHeights.get(block.id)??0)-block.y)<.06?"level":"moving"}`);
+      }
       if(timing.length){
         const switches=l!.switches.map(plate=>`${plate.id}: ${sim.activated.includes(plate.id)?"powered":"off"}`);
         $("story-mechanisms").textContent=[...switches,...timing].join(" · ");
@@ -137,7 +140,7 @@ export async function mountNative(
     delete canvas.dataset.checkpoint;
     $("native-pause").textContent = "Ⅱ";
     $("native-instruction").textContent = l!.hint;
-    scene.update(sim.orbs, sim.opened, sim.activated);
+    scene.update(sim.orbs, sim.opened, sim.activated, sim.liftHeights);
     feedback?.reset();
     hud();
   }
@@ -458,7 +461,7 @@ export async function mountNative(
         if(!before || orb.state!=="active" || before.state!=="active")return orb;
         return {...orb,x:before.x+(orb.x-before.x)*fraction,y:before.y+(orb.y-before.y)*fraction,z:before.z+(orb.z-before.z)*fraction};
       }) : sim.orbs;
-      scene.update(position, sim.opened, sim.activated);
+      scene.update(position, sim.opened, sim.activated, sim.liftHeights);
       scene.draw(
         dt,
         save.settings.reduced || (story!==undefined && reducedMotion.matches),

@@ -1,0 +1,9 @@
+import { circuit, timing } from "./circuit";
+
+export const nullLevels = [
+  circuit("null",1,"The First Glitch","Dock the repair key first. The second lane’s dormant current turns on when its gate opens.","Its own safeguards are tearing the network apart.",[{z:-1.7,tick:0,plate:"repair key"},{z:1.7,tick:100,gate:"repair key",current:true,end:4.55,aim:-4.75}]),
+  circuit("null",2,"Broken Reflection","The elevated lane pushes against the marble. The lower one accelerates it forward. Follow the arrow direction.","The reflection belongs to the old world, before NULL stopped the flow.",[{z:1.75,tick:0,gravity:-1.45,height:1.1,aim:-3.74,end:2.35},{z:-1.75,tick:100,gravity:6,end:4.35}]),
+  circuit("null",3,"System Failure","Restore the current on the low deck and cross the bridge grown by its receiver.","The forest sends a reply through the broken channel.",[{z:1.7,tick:0,current:true,plate:"repair the roots",end:4.5,aim:-4.65},{z:-1.7,tick:120,bridge:"repair the roots",height:1.15,end:2.9}]),
+  circuit("null",4,"The Last Connection","Use gravity to charge the roots. Their bridge carries the key to a timed gate.","The system is starting to listen.",[{z:-3,tick:0,gravity:6,plate:"charged root",end:4.4},{z:0,tick:110,bridge:"charged root",plate:"timing key",height:1,end:2.9},{z:3,tick:220,timed:timing(35),gate:"timing key",end:2.8}]),
+  circuit("null",5,"The Fractured Core","Restore water, bridge, gravity and transit in order. The last receiver reconnects the Current.","No single part of the world can keep the rest safe by freezing it.",[{z:-4.7,tick:0,current:true,plate:"water",aim:-4.6,end:4.5},{z:-2.35,tick:110,bridge:"water",plate:"roots",height:1.1,end:2.9},{z:0,tick:225,gravity:7,gate:"roots",plate:"gravity",end:4.25},{z:2.35,tick:340,timed:timing(95),gate:"gravity",plate:"transit",height:.65,end:2.9},{z:4.7,tick:460,aimZ:.25,gate:"transit",plate:"the Current",end:3.2}]),
+];

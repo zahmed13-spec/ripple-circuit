@@ -3,7 +3,7 @@ import {beforeAll, describe, expect, test} from "vitest";
 import {currentActive,inCurrent,ready,replay3,Simulation,summary,validate} from "../src/native/physics";
 import {nativeLevels} from "../src/native/levels";
 import {storyLevels} from "../src/story/levels";
-import {available,completed,loadStory,persistStory,recordStory,restored,STORY_KEY,restorationStage,markViewed,presentation} from "../src/story/save";
+import {available,completed,loadStory,persistStory,recordStory,restored,EXPANSION_STORY_KEY,STORY_KEY,restorationStage,markViewed,presentation} from "../src/story/save";
 
 beforeAll(() => ready);
 describe("Aero Haven physics",()=>{
@@ -71,6 +71,7 @@ test("story results unlock sequentially, keep better scores, and preserve classi
   expect(completed(loadStory(storage))).toBe(5);
   expect(restored(loadStory(storage))).toBe(true);
   expect(entries.get("ripple-circuit-v1")).toBe('{"version":1,"wins":12}');
+  entries.delete(EXPANSION_STORY_KEY);
   entries.set(STORY_KEY,JSON.stringify({version:1,best:{"aero-1":score,"aero-5":score}}));
   expect(completed(loadStory(storage))).toBe(1);
   entries.set(STORY_KEY,"invalid");

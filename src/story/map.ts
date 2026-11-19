@@ -72,7 +72,7 @@ export function chapterMap(main: HTMLElement, story: StorySave, chapter:StoryCha
     <div class="story-actions">${stage === 0 && !story.viewed.includes("first-spark") && !presentation(story).skipScenes
       ? '<a class="primary link-button" href="#story-intro">Begin story →</a>'
       : `<a class="primary link-button" href="${storyLink(next)}">${restored(story)?"Replay aqueduct":"Continue story"} →</a><a href="#story-intro">Replay opening</a>`}
-      ${restored(story) ? '<a href="#story-restored">Revisit the restoration</a><a href="#story-eco">Preview Eco Canopy →</a>' : ""}
+      ${restored(story) ? '<a href="#story-restored">Revisit the restoration</a><a href="#story-world-eco">Continue to Eco Canopy →</a><a href="#story-eco">Replay the Canopy signal</a>' : ""}
     </div>
     <ol class="story-levels" aria-label="Aero Haven circuits">${aero.levelIds.map((id,i)=>{
       const score = story.best[id];

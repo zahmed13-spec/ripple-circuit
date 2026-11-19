@@ -28,7 +28,7 @@ test("existing Aero save opens Eco and a real first win unlocks the next circuit
   await expect(page.getByRole("heading",{name:"A Seed Answers"})).toBeVisible();
   await page.getByRole("button",{name:"Skip scene"}).click();
   await expect(page).toHaveURL(/st6-eco-2#story-play/);
-  const best=await page.evaluate(()=>JSON.parse(localStorage.getItem("ripple-circuit-story-v1")!).best);
+  const best=await page.evaluate(()=>JSON.parse(localStorage.getItem("ripple-circuit-story-v2")!).best);
   expect(Object.keys(best)).toHaveLength(6);
   expect(best["aero-5"].ticks).toBe(100);
 });

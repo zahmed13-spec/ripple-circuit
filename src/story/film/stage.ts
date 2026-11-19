@@ -30,8 +30,8 @@ export class FilmStage {
   private readonly onRestored=()=>{this.lost=false;};
 
   constructor(readonly canvas:HTMLCanvasElement, eco:boolean, quality:"low"|"medium"|"high",cast?:Cast, world?:ExpansionWorld) {
-    this.renderer=new T.WebGLRenderer({canvas,antialias:quality!=="low",alpha:false,powerPreference:"low-power",preserveDrawingBuffer:true});
-    this.quality=quality==="high"?1.6:quality==="medium"?1.25:1;
+    this.renderer=new T.WebGLRenderer({canvas,antialias:quality!=="low",alpha:false,powerPreference:quality==="low"?"default":"high-performance"});
+    this.quality=quality==="high"?1.6:quality==="medium"?1.1:.72;
     this.world.fog=new T.Fog("#cfe9ec",16,52);
     this.key.position.set(-5,8,5);
     this.world.add(this.key,new T.HemisphereLight("#e3f9ff","#365777",1.15));
@@ -40,7 +40,7 @@ export class FilmStage {
     gradient.generateMipmaps=false;
     gradient.needsUpdate=true;
     if(cast)for(const resource of cast.resources)this.resources.add(resource);
-    this.set=new FilmSet(this.world,this.own,gradient,eco,cast?.seal,world ? themes[world] : undefined);
+    this.set=new FilmSet(this.world,this.own,gradient,eco,cast?.seal,world ? themes[world] : undefined,quality==="low");
     this.luma=new LumaRig(this.own,gradient,cast);
     this.ripple=new RippleRig(this.own,gradient,cast);
     this.world.add(this.luma.object,this.ripple.object);

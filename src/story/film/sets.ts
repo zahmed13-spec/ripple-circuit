@@ -28,7 +28,7 @@ export class FilmSet {
   private readonly shade=new T.Color();
   private readonly hazy=new T.Color("#cbf7eb");
   private readonly violet=new T.Color("#756c92");
-  constructor(private scene:T.Scene,private own:Own,private ramp:T.DataTexture,private eco:boolean,private seal?:T.Object3D, theme?:WorldTheme) {
+  constructor(private scene:T.Scene,private own:Own,private ramp:T.DataTexture,private eco:boolean,private seal?:T.Object3D, theme?:WorldTheme, low=false) {
     if(theme){this.themedSky=1;this.hazy.set(theme.fog);this.violet.set(theme.sky);this.pale.set(theme.restored);this.dark.set(theme.dormant);}
     const scenery=new T.Group();
     scene.add(scenery,this.fracture);
@@ -82,14 +82,14 @@ export class FilmSet {
     seabed.position.y=-3.65;
     scene.add(seabed);
 
-    const sphere=own(new T.SphereGeometry(1,18,12));
+    const sphere=own(new T.SphereGeometry(1,low?12:18,low?8:12));
     const cloudInk=fill(own,"#e3fcff");
     const mistInk=own(new T.MeshBasicMaterial({color:"#bee1f4",transparent:true,opacity:.69,depthWrite:false}));
-    for(let i=0;i<9;i++){
+    for(let i=0;i<(low?5:9);i++){
       const cloud=new T.Group();
       cloud.position.set((i%5-2)*9,2.4+(i%3)*2.6,-15-Math.floor(i/5)*10);
       cloud.userData.origin=cloud.position.x;
-      for(let j=0;j<4;j++){
+      for(let j=0;j<(low?2:4);j++){
         const puff=new T.Mesh(sphere,j===0?mistInk:cloudInk);
         puff.position.set((j-1.5)*1.2,(j%2)*.32,0);
         puff.scale.set(1.85+j*.12,.32+(j%3)*.19,.84);
@@ -107,7 +107,7 @@ export class FilmSet {
     const box=own(new T.BoxGeometry(1,1,1));
     const cylinder=own(new T.CylinderGeometry(1,.78,1,12));
     const rock=own(new T.DodecahedronGeometry(1,0));
-    const torus=own(new T.TorusGeometry(1,.06,7,42));
+    const torus=own(new T.TorusGeometry(1,.06,low?5:7,low?26:42));
     const jewel=own(new T.OctahedronGeometry(1));
     const glass=own(new T.MeshToonMaterial({color:eco?"#c7fff1":"#9deeee",gradientMap:ramp,transparent:true,opacity:.43,depthWrite:false,side:T.DoubleSide}));
     const neon=fill(own,"#affff1");
@@ -134,13 +134,33 @@ export class FilmSet {
         part(box,palette.gold,[x+side*(w/2-.30),y+.085,z-d/2+.18],[.18,.12,.18]);
       }
     };
-    for(let i=0;i<7;i++){
+    for(let i=0;i<(low?5:7);i++){
       const x=(i-3)*5.3; const z=-18-(i%3)*3;
       island(x,-.8+(i%3)*.6,z,1.9+(i%2)*.45);
       part(box,palette.chalk,[x,.1+(i%3)*.6,z],[.3,1.28,.35]);
       part(jewel,palette.gem,[x,1+(i%3)*.6,z],[.30,.55,.29]);
     }
 
+    if(theme?.id==="terra"){
+      for(let i=0;i<5;i++){
+        const x=-4.5+i*1.4;
+        const crystal=part(jewel,cel(own,ramp,i%2?theme.restored:"#a36c54"),[x,.91+i%3*.47,-8.3],[.54,1.38+i%3*.41,.65]);
+        crystal.rotation.z=(i-2)*.17;
+      }
+    } else if(theme?.id==="metro"){
+      for(let i=0;i<5;i++){
+        const x=-4+i*2.1;
+        part(box,palette.chalk,[x,1.2,-8.25],[.93,2.8+i%2*1.2,.95]);
+        part(torus,neon,[x,1.98,-7.71],[.56,.56,.72]);
+      }
+      part(box,palette.edge,[.2,.4,-7.82],[9.8,.34,.81]);
+    } else if(theme?.id==="null"){
+      for(let i=0;i<5;i++){
+        const x=(i-2)*2.1;
+        const darkGlass=cel(own,ramp,i%2?"#49335e":"#ad6794");
+        part(jewel,darkGlass,[x,1.12+i%3*.49,-7.7],[.62,1.12,.56]).rotation.z=(i-2)*.32;
+      }
+    }
     if(eco){
       deck(-2.5,0,1.15,5.8,3);
       island(2.5,.2,-3.75,3.1);
