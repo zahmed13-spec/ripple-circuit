@@ -111,7 +111,7 @@ export class StoryEnvironment {
     const active = [];
     for (const {spec,material,arrows} of this.streams) {
       const on = !spec.switchId || activated.includes(spec.switchId);
-      material.color.set(on ? "#20cdd7" : this.spec.theme.dormant);
+      material.color.set(on ? spec.kind==="gravity" ? "#e7a849" : "#20cdd7" : this.spec.theme.dormant);
       material.opacity = on ? .66 : .27;
       arrows.visible = on;
       if (on) active.push(spec.id);

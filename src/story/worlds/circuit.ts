@@ -59,4 +59,3 @@ export function circuit(world: ExpansionWorld, id: number, title: string, hint: 
     requiredSwitches:switches.map(plate=>plate.id),currents,gravityZones,solution};
 }
 export const timing = (offset=0, period=210, open=150) => ({offset,period,open});
-

@@ -70,7 +70,7 @@ export async function mountNative(
   try {
     scene = new Arena3D(canvas, {
       ...l,native:true,
-      story:story && {theme:story.theme,currents:[...l.currents??[],...l.gravityZones??[]],stage:story.stage(),level:story.level.id},
+      story:story && {theme:story.theme,currents:[...l.currents??[],...(l.gravityZones??[]).map(zone=>({...zone,kind:"gravity" as const}))],stage:story.stage(),level:story.level.id},
     });
   } catch {
     sim.dispose();

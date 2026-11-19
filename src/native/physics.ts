@@ -7,7 +7,7 @@ export type Vec = { x: number; y: number; z: number };
 export type Input = Vec & { tick: number; surface: string };
 export const EXPANSION_ENGINE = "rapier-0.21.0-rc6.1";
 export const STORY_ENGINE = "rapier-0.21.0-rc4.1";
-export type Current = { id: string; x: number; y: number; z: number; w: number; d: number; force: Vec; switchId?: string };
+export type Current = { id: string; x: number; y: number; z: number; w: number; d: number; force: Vec; switchId?: string; kind?: "gravity" };
 export type NativeLevel = {
   id: number;
   version: 3 | 4 | 6;
