@@ -2,10 +2,10 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { films } from "../src/story/film/boards";
 import { characterContent, dialogueContent, levelContent, siteContent, worldContent } from "../src/content";
-import cinema from "../src/content/cinematics.json";
-import dialogue from "../src/content/dialogue.json";
-import characters from "../src/content/characters.json";
-import worlds from "../src/content/worlds.json";
+import cinema from "../src/content/cinematics.json" with { type: "json" };
+import dialogue from "../src/content/dialogue.json" with { type: "json" };
+import characters from "../src/content/characters.json" with { type: "json" };
+import worlds from "../src/content/worlds.json" with { type: "json" };
 
 function check(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error("Story content · " + message);

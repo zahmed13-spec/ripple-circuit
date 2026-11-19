@@ -1,7 +1,7 @@
-import cinematics from "./cinematics.json";
-import dialogue from "./dialogue.json";
-import characters from "./characters.json";
-import worlds from "./worlds.json";
+import cinematics from "./cinematics.json" with { type: "json" };
+import dialogue from "./dialogue.json" with { type: "json" };
+import characters from "./characters.json" with { type: "json" };
+import worlds from "./worlds.json" with { type: "json" };
 
 const byId = <T extends { id: string }>(items: readonly T[]): Record<string, T> =>
   Object.fromEntries(items.map(item => [item.id, item]));
@@ -16,5 +16,5 @@ export const html = (text: string) => text.replace(/[&<>"']/g, char => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 })[char]!);
 
-export { default as levelContent } from "./levels.json";
-export { default as siteContent } from "./site.json";
+export { default as levelContent } from "./levels.json" with { type: "json" };
+export { default as siteContent } from "./site.json" with { type: "json" };
