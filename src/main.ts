@@ -1,3 +1,4 @@
+import { landscape } from "./scene/landscape";
 import { html, siteContent } from './content';
 import './style.css';
 import {Arena3D,classicData,addClassicObjects,classicFrame,classicPoint} from './scene/arena';
@@ -21,7 +22,7 @@ let replayInputs=level.solution, guided=false, personalReplay=false;
 let resizeCanvas=()=>{};
 let acc=0,last=0,handled=false,opponent:ReturnType<typeof decodeRun>=null,playback=false,pb=false;
 const app=$('#app');
-app.innerHTML=`<header><a href="#home" class="brand" aria-label="Ripple Circuit home"><span class="brandmark">◎</span><span>RIPPLE<span class="brand-light"> CIRCUIT</span></span></a><nav aria-label="Main navigation"><a href="#story">Story Mode</a><a href="#depth">3D</a><a href="#levels">Circuits</a><a href="#daily">Daily <span class="dot"></span></a><a href="#how">How to play</a><button id="settings" class="icon" aria-label="Settings">⚙</button></nav></header>
+app.innerHTML=`${landscape()}<header><a href="#home" class="brand" aria-label="Ripple Circuit home"><span class="brandmark">◎</span><span>RIPPLE<span class="brand-light"> CIRCUIT</span></span></a><nav aria-label="Main navigation"><a href="#story">Story Mode</a><a href="#depth">3D</a><a href="#levels">Circuits</a><a href="#daily">Daily <span class="dot"></span></a><a href="#how">How to play</a><button id="settings" class="icon" aria-label="Settings">⚙</button></nav></header>
 <main id="main"></main><footer><span>ONE TAP. ENDLESS POSSIBILITIES.</span><div><a href="#privacy">Privacy</a><a href="#feedback">Feedback</a><span>Ripple Circuit · Local play</span></div></footer>
 <dialog id="dialog" aria-labelledby="dialog-title"></dialog><div id="toast" role="status" aria-live="polite"></div>`;
 const dialog=$<HTMLDialogElement>('#dialog');
@@ -106,3 +107,5 @@ function frame(time:number){const dt=last?Math.min((time-last)/1000,.1):0;last=t
 setInterval(()=>{const seconds=Math.max(0,Math.floor((daily().reset-Date.now())/1000));const text=`Resets in ${String(Math.floor(seconds/3600)).padStart(2,'0')}:${String(Math.floor(seconds/60)%60).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')} · 00:00 UTC`;for(const id of ['#reset-time','#daily-clock'])if($(id))$(id).textContent=text;},1000);
 document.body.classList.toggle('contrast',save.settings.contrast);document.body.classList.toggle('reduced',save.settings.reduced);route();requestAnimationFrame(frame);
 if(import.meta.env.PROD&&'serviceWorker' in navigator)window.addEventListener('load',()=>{void navigator.serviceWorker.register('./sw.js').catch(()=>{});});
+
+document.addEventListener("visibilitychange",()=>document.body.classList.toggle("landscape-paused",document.hidden));
