@@ -7,6 +7,7 @@ type Paint = "porcelain" | "jade" | "foliage" | "steel" | "glass" | "water" | "p
 type Detail = 0 | 1 | 2;
 const up = new T.Vector3(0, 1, 0);
 const identity = new T.Quaternion();
+const horizontalRing = new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), Math.PI / 2);
 
 /** Scenery lives outside the board and is never registered as an aim surface. */
 export class AeroScenery {
@@ -120,6 +121,8 @@ export class AeroScenery {
       this.part("orb", i % 2 ? "glass" : "power", [x, .09 + (i % 5) * .19, z], [.085, .085, .085], 2);
     }
     this.arch(3.9, -.05, -8.85, .92, 1);
+    this.island(-4.8, -2.0, 5.3, 1.34, "foliage", 1);
+    this.part("dome", "glass", [-4.8, -1.9, 5.3], [1.03, 1.08, 1.03], 1);
   }
 
   private reservoir() {
@@ -127,7 +130,7 @@ export class AeroScenery {
       this.island(x, y - 1.1, -5.4, radius + .30, "porcelain");
       this.part("pipe", "glass", [x, y, -5.4], [radius, 1.85, radius]);
       this.part("pipe", "water", [x, y - .4, -5.4], [radius * .93, 1, radius * .93]);
-      this.part("pipe", "porcelain", [x, y + .93, -5.4], [radius * 1.03, .11, radius * 1.03]);
+      this.part("ring", "porcelain", [x, y + .93, -5.4], [radius, radius, .61], 0, horizontalRing);
       this.part("dome", "glass", [x, y + .98, -5.4], [radius, .67, radius], 1);
       this.spill(x, y + .07, -5.36 + radius, 2.6 + y, radius * .62);
     }
@@ -135,6 +138,9 @@ export class AeroScenery {
     this.pipe([-3.8, .29, -6.14], [4.6, .29, -6.14], .08, "power", 1);
     this.island(-6.2, -1.55, -7.1, 1.4, "foliage", 1);
     this.part("box", "porcelain", [-5, -1.08, -6.14], [3, .12, .48], 1);
+    this.island(-4.4, -2, 4.7, 1.5, "porcelain", 1);
+    this.part("pipe", "water", [-4.4, -1.85, 4.7], [1.25, .24, 1.25], 1);
+    this.part("ring", "porcelain", [-4.4, -1.71, 4.7], [1.26, 1.26, .46], 1, horizontalRing);
   }
 
   private terraces() {
@@ -152,6 +158,9 @@ export class AeroScenery {
     this.pipe([-5.3, 1.4, -5.8], [3, -.4, -6.3], .13, "porcelain", 1);
     this.part("box", "glass", [5.3, .55, -5.35], [.95, 1.54, .21]);
     this.part("gem", "power", [5.3, 1.03, -5.18], [.19, .25, .09], 1);
+    this.island(-5.1, -1.71, 4.2, 1.3, "foliage", 1);
+    this.pipe([-5.1, -1.67, 4.2], [-.6, -2.54, 5.2], .21, "steel", 1);
+    this.island(-.6, -2.54, 5.2, .93, "porcelain", 1);
   }
 
   private wheel(x: number, y: number, z: number, radius: number) {
@@ -184,12 +193,15 @@ export class AeroScenery {
     this.island(5.2, -.7, -5.1, 1.58, "porcelain");
     this.part("dome", "glass", [5.2, -.55, -5.1], [1.29, 1.34, 1.29]);
     this.part("box", "power", [5.2, -.19, -4.6], [.69, .22, .12], 2);
+    this.island(-3.3, -1.9, 5.75, 1.25, "porcelain", 1);
+    this.pipe([-4.1, -1.66, 5.75], [-.3, -1.66, 5.75], .2, "steel", 1);
+    this.pipe([-4.1, -1.46, 5.75], [-.3, -1.46, 5.75], .06, "power", 1);
   }
 
   private crown() {
     this.island(-.8, -.65, -7.45, 2.13, "porcelain");
-    this.part("gem", "power", [-.8, 1.02, -7.45], [.81, 1.52, .81]);
-    this.part("gem", "glass", [-.8, 1.02, -7.45], [1.09, 1.8, 1.09], 1);
+    this.part("gem", "power", [-.8, 1.62, -7.45], [.79, 1.55, .79]);
+    this.part("gem", "glass", [-.8, 1.62, -7.45], [1.03, 1.78, 1.03], 1);
     for (const x of [-5.35, 3.8]) {
       this.island(x, -.95, -7, 1.96, "foliage");
       this.part("pipe", "porcelain", [x, .4, -7], [.54, 2.65, .54]);
@@ -203,6 +215,12 @@ export class AeroScenery {
     this.island(5, -1.4, -10.7, 2.24, "foliage", 1);
     this.island(-7.4, -1.8, -10.1, 2.55, "foliage", 1);
     this.arch(-.8, .66, -8.71, 2, 2);
+    this.pipe([-6.9, -2.22, 6.2], [3.6, -2.22, 6.2], .16, "porcelain", 1);
+    this.part("box", "water", [-1.65, -2.14, 6.2], [10.5, .11, .77], 1);
+    for (const x of [-5.9, 2.55]) {
+      this.island(x, -2.38, 6.2, 1.08, "jade", 1);
+      this.part("gem", "power", [x, -1.93, 6.2], [.18, .37, .18], 1);
+    }
   }
 
   setPower(stage: number, switches: number) {
