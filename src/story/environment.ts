@@ -2,6 +2,7 @@ import * as T from "three";
 import type { Current } from "../native/physics";
 import type { Arena3D } from "../scene/arena";
 import type { WorldTheme } from "./themes";
+import { AeroScenery } from "./aero-scenery";
 import { Landmarks } from "./landmarks";
 import { Luma } from "./luma";
 import type { Mood } from "./narrative";
@@ -10,12 +11,15 @@ export type Environment = {
   theme: WorldTheme;
   currents?: readonly Current[];
   stage?: number;
+  level?: number;
 };
 type Stream = { spec: Current; material: T.MeshBasicMaterial; arrows: T.Group };
 
 export class StoryEnvironment {
   private streams: Stream[] = [];
   private luma: Luma;
+  private scenery?: AeroScenery;
+  private phase = 0;
   private landmarks: Landmarks;
   private time = 0;
   private stage = -1;
@@ -63,6 +67,9 @@ export class StoryEnvironment {
     water.position.y=-3.36;
     decor.add(water);
     this.landmarks=new Landmarks(arena,decor,theme);
+    if (theme.id === "aero" && spec.level) {
+      this.scenery = new AeroScenery(arena, decor, spec.level);
+    }
     this.luma=new Luma(arena,decor);
     this.luma.react("idle",undefined,Infinity);
 
@@ -119,13 +126,19 @@ export class StoryEnvironment {
     this.stage=stage;
     this.signal=signal;
     this.landmarks.set(stage,signal);
+    this.scenery?.setPower(stage,this.phase);
     this.arena.canvas.dataset.stage=String(stage);
     this.arena.canvas.dataset.restored=String(stage===5);
     this.arena.canvas.dataset.signal=signal;
     this.arena.dirty=true;
   }
 
-  setPhase(phase:number) { this.landmarks.setPhase(phase); }
+  setPhase(phase:number) {
+    this.phase = phase;
+    this.landmarks.setPhase(phase);
+    this.scenery?.setPower(this.stage,phase);
+    this.arena.dirty = true;
+  }
 
   react(mood:Mood,target?:T.Vector3,hold?:number) {
     this.luma.react(mood,target,hold);
@@ -140,6 +153,7 @@ export class StoryEnvironment {
     this.ocean.uniforms.energy.value=this.stage/5;
     this.ocean.uniforms.detail.value=low?0:1;
     this.landmarks.animate(dt,this.time,reduced,low);
+    this.scenery?.animate(this.time,reduced,this.arena.quality);
     this.clouds.forEach((cloud,index)=>{
       cloud.position.x=cloud.userData.cloudX+(reduced||low?0:Math.sin(this.time*.09+index)*.64);
     });
