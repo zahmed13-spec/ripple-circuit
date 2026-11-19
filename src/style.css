@@ -148,3 +148,10 @@
 @media(max-width:600px) { .sky-cloud:nth-of-type(even),.sky-bubble:nth-of-type(even),.sky-grass g:nth-child(even) {display:none} }
 @media(prefers-reduced-motion:reduce) { .landscape * { animation:none!important; } .sky-bubble {display:none} }
 .reduced .sky-bubble,.contrast .landscape { display:none; }
+/* Glass framing shared by classic, sprint, daily and native boards. */
+.play-section { background:linear-gradient(155deg,#f9fffff2,#c7edf1d9 66%,#d9f8ed); border-color:#ffffffd9; }
+.arena-wrap { box-shadow:0 0 0 1px #399bb77a,0 0 0 4px #ffffff70,0 12px 23px #1a75862a; }
+.daily-status { border-radius:14px; background:linear-gradient(105deg,#d7fff2,#e4f7ff); }
+.primary:focus-visible,.secondary:focus-visible,a:focus-visible { outline:3px solid #155f8b; outline-offset:3px; }
+.primary:active,.secondary:active { transform:translateY(1px); }
+.contrast .play-section { background:#fff; }

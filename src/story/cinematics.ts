@@ -190,8 +190,7 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
     soundscape.setActive(active&&!paused&&options.music);
     if(active&&!paused){
       elapsed=Math.min(runtime,elapsed+dt);
-      // 30 fps camera and water, plus deliberate 15 fps character poses.
-      if(elapsed-lastRender>=.031||elapsed===runtime)refresh();
+      refresh();
       if(elapsed===runtime)end();
     }
     if(!paused)frame=requestAnimationFrame(loop);

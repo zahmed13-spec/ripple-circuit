@@ -17,7 +17,7 @@ function blendPose(a:Pose,b:Pose,k:number):Pose {
     mix(a[3],b[3],k),mix(a[4],b[4],k),k<.45?a[5]:b[5]];
 }
 export function poseAt(shot:Shot,time:number,reduced=false) {
-  const motion=reduced?.5:Math.floor(time*15)/15/shot.seconds;
+  const motion=reduced?.5:time/shot.seconds;
   return {
     luma:sample(shot.luma,motion,blendPose),
     ripple:shot.ripple&&sample(shot.ripple,motion,blendPose),
