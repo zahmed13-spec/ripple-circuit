@@ -224,7 +224,8 @@ export class AeroScenery {
   }
 
   setPower(stage: number, switches: number) {
-    this.energy = Math.max(stage / 5, Math.min(1, switches / (this.level === 5 ? 3 : 1)));
+    const livePower = Math.min(1, switches / (this.level === 5 ? 3 : 1));
+    this.energy = stage === 5 ? 1 : .62 * stage / 5 + .38 * livePower;
     this.materials.power.color.copy(this.quiet).lerp(this.lit, this.energy);
     this.materials.water.opacity = .42 + .23 * this.energy;
   }

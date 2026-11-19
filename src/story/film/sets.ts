@@ -14,6 +14,7 @@ export class FilmSet {
   private shutters:T.Mesh[]=[];
   private glass?:T.Mesh;
   private screen?:T.Mesh;
+  private warning?:{ mesh:T.Mesh; texture:T.CanvasTexture; drawing:CanvasRenderingContext2D; text:string };
   private fracture=new T.Group();
   private growth?:T.Mesh;
   private wave?:T.Mesh;
@@ -214,6 +215,18 @@ export class FilmSet {
       part(box,palette.dark,[4.2,.52,.23],[1.43,1.02,.68]);
       part(box,palette.edge,[4.2,1.33,.23],[2.45,1.54,.38]).rotation.x=-.08;
       this.screen=part(box,fill(own,"#223952"),[4.2,1.36,.44],[2.19,1.25,.03]);
+      const warningCanvas=document.createElement("canvas");
+      warningCanvas.width=512;
+      warningCanvas.height=256;
+      const drawing=warningCanvas.getContext("2d");
+      if(drawing){
+        const texture=own(new T.CanvasTexture(warningCanvas));
+        texture.colorSpace=T.SRGBColorSpace;
+        const material=own(new T.MeshBasicMaterial({map:texture, toneMapped:false}));
+        const mesh=part(own(new T.PlaneGeometry()),material,[4.2,1.36,.46],[2.12,1.12,1]);
+        mesh.visible=false;
+        this.warning={mesh,texture,drawing,text:""};
+      }
       this.wave=part(torus,own(new T.MeshBasicMaterial({color:"#d7ffd0",transparent:true,opacity:0,depthWrite:false})),[-1,.32,-6.3],[.5,.5,.14]);
       this.wave.rotation.x=-Math.PI/2;
     }
@@ -254,6 +267,37 @@ export class FilmSet {
       const shard=part(jewel,i%3===0?nullEdge:nullGlass,[0,0,0],[.13,.65,.08],this.fracture);
       shard.userData.theta=i*Math.PI*2/8;
     }
+  }
+
+  showWarning(text:string) {
+    const warning=this.warning;
+    if(!warning)return;
+    warning.mesh.visible=Boolean(text);
+    if(!text || text===warning.text)return;
+    warning.text=text;
+    const {drawing,texture}=warning;
+    drawing.fillStyle="#0c263b";
+    drawing.fillRect(0,0,512,256);
+    drawing.strokeStyle="#ffbc82";
+    drawing.lineWidth=3;
+    drawing.strokeRect(16,16,480,224);
+    drawing.fillStyle="#ffbc82";
+    drawing.fillRect(35,36,78,8);
+    drawing.font="600 25px monospace";
+    const words=text.toUpperCase().split(/\s+/);
+    let line="";
+    let y=88;
+    for(const word of words){
+      const next=line ? line+" "+word : word;
+      if(line && drawing.measureText(next).width>430){
+        drawing.fillText(line,35,y,430);
+        line=word;
+        y+=33;
+        if(y>213)break;
+      } else line=next;
+    }
+    if(y<=213)drawing.fillText(line,35,y,430);
+    texture.needsUpdate=true;
   }
 
   apply(effect:Effect,energy:number,time:number,progress:number,reduced:boolean) {

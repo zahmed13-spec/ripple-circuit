@@ -89,6 +89,8 @@ export class FilmStage {
     this.key.color.setHex(energy>.8?0xfff1c3:0xe4f7ff);
     if(this.mixer)this.mixer.setTime((reduced?.32:phase*.98)*this.clipDuration);
     this.set.apply(shot.effect,energy,time,phase,reduced);
+    const line=shot.line;
+    this.set.showWarning(shot.id==="directive-2" && line && (reduced || time>=line.in) ? line.text : "");
     this.ripple.apply(pose.ripple,time,energy,reduced);
     this.luma.apply(pose.luma,this.camera,pose.ripple?this.ripple.object.position:this.focus,
       reduced?"–":mouthAt(shot,time),time,reduced);
