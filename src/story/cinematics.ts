@@ -10,6 +10,7 @@ import { Soundscape } from "./soundscape";
 
 export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySave, save:Save, storage?:Storage,
   stillCurrent:()=>boolean=()=>true) {
+  main.innerHTML = '<section class="story-page"><p role="status">Loading animated scene…</p><a href="#story-aero">Return to Aero Haven</a></section>';
   const cast=await loadCast();
   if(!stillCurrent()){
     if(cast)for(const resource of cast.resources)resource.dispose();
@@ -94,8 +95,12 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
       previous.disabled=at===0;
       force=true;
     }
-    const dipIn=within<.28 ? 1-within/.28 : 0;
-    const dipOut=shot.seconds-within<.20 ? 1-(shot.seconds-within)/.20 : 0;
+    const memoryCut=shot.effect==="memory" || film.shots[at-1]?.effect==="memory";
+    const fadeIn=at===0 || memoryCut ? .22 : 0;
+    const fadeOut=at===film.shots.length-1 ? .18 : 0;
+    const dipIn=within<fadeIn ? 1-within/fadeIn : 0;
+    const dipOut=shot.seconds-within<fadeOut ? 1-(shot.seconds-within)/fadeOut : 0;
+    dip.style.background=memoryCut ? "#e4faff" : "";
     dip.style.opacity=(!reduced()&&!paused?Math.max(dipIn,dipOut)*.7:0).toFixed(2);
     const spoken=shot.line;
     const caption=spoken&&((within>=spoken.in&&within<spoken.out)||paused&&reduced()||!renderer);
@@ -126,6 +131,14 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
     paused=value;
     toggle.textContent=ended?"Replay":value?"Play":"Pause";
     main.querySelector(".film-frame")!.setAttribute("data-paused",String(value));
+    if(value){
+      cancelAnimationFrame(frame);
+      frame=0;
+      soundscape.setActive(false);
+    } else if(!frame){
+      last=0;
+      frame=requestAnimationFrame(loop);
+    }
   }
   function changeTime(time:number) {
     elapsed=Math.min(runtime,Math.max(0,time));
@@ -165,7 +178,8 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
   };
   function loop(time:number) {
     if(disposed)return;
-    const dt=last?Math.min(.13,(time-last)/1000):0;
+    frame=0;
+    const dt=last?(time-last)/1000:0;
     last=time;
     const active=!document.hidden&&!document.querySelector("dialog[open]");
     if(renderer?.lost) {
@@ -179,24 +193,27 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
       if(elapsed-lastRender>=.031||elapsed===runtime)refresh();
       if(elapsed===runtime)end();
     }
-    frame=requestAnimationFrame(loop);
+    if(!paused)frame=requestAnimationFrame(loop);
   }
   const resize=()=>refresh(true);
+  canvas.addEventListener("webglcontextlost",()=>{fallback.hidden=false;setPaused(true);refresh(true);});
   const motionChanged=()=>{
     if(reduced())setPaused(true);
     resize();
   };
   viewportMotion.addEventListener("change",motionChanged);
   window.addEventListener("resize",resize);
+  const resetClock=()=>{last=0;};
+  document.addEventListener("visibilitychange",resetClock);
   setPaused(paused);
   refresh(true);
-  frame=requestAnimationFrame(loop);
   return {
     pause(){setPaused(true);},
     dispose(){
       disposed=true;
       cancelAnimationFrame(frame);
       window.removeEventListener("resize",resize);
+      document.removeEventListener("visibilitychange",resetClock);
       viewportMotion.removeEventListener("change",motionChanged);
       renderer?.dispose();
       soundscape.dispose();
