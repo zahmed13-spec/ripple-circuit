@@ -1,4 +1,4 @@
-import { html } from "../content";
+import { characterContent, html } from "../content";
 import type { Save } from "../services/storage";
 import { motif } from "../services/audio";
 import { isStoryId, storyLink } from "./chapters";
@@ -31,7 +31,7 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
     <p class="eyebrow">${html(film.chapter)}</p><h1>${html(film.title)}</h1></div>
     <span>Animated story<br>Subtitles</span></div>
     <div class="film-frame">
-      <canvas role="img" aria-label="${html(film.title)}, an original cel-shaded animated scene"></canvas>
+      <canvas role="img" aria-label="${html(film.title)}, an animated scene with ${html(characterContent.Luma.name)} and ${html(characterContent.Ripple.name)}"></canvas>
       <div class="film-preview-label" id="film-fallback" hidden>Animation unavailable. Read the scene below.</div>
       <div class="film-dip" aria-hidden="true"></div>
       <div class="film-lettering"><span id="shot-position"></span><strong id="shot-label"></strong></div>

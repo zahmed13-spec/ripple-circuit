@@ -1,4 +1,4 @@
-import { html, levelContent, siteContent, worldContent } from "../content";
+import { characterContent, html, levelContent, siteContent, worldContent } from "../content";
 import { aero, chapters, storyLink } from "./chapters";
 import { available, completed, persistStory, presentation, restored, type StorySave } from "./save";
 import { themes } from "./themes";
@@ -54,7 +54,8 @@ export function chapterMap(main: HTMLElement, story: StorySave) {
     </div>
     <ol class="story-levels" aria-label="Aero Haven circuits">${aero.levelIds.map((id,i)=>{
       const score = story.best[id];
-      const content = `<span class="story-level-number">1-${i+1}</span><span><strong>${html(levelContent.levels[i].title)}</strong><small>${score ? `${score.pulses} pulses · ${(score.ticks/60).toFixed(2)}s · ${"★".repeat(score.stars)}` : i===4?"Aqueduct finale":["Shockwaves","Water currents","Elevation","Pressure plates"][i]}</small></span>`;
+      const level = levelContent.levels[i];
+      const content = `<span class="story-level-number">1-${i+1}</span><span><strong>${html(level.title)}</strong><small>${score ? `${score.pulses} pulses · ${(score.ticks/60).toFixed(2)}s · ${"★".repeat(score.stars)}` : i===4?"Aqueduct finale":["Shockwaves","Water currents","Elevation","Pressure plates"][i]}</small><small>${html(level.narrative.replace(/^Luma:\s*/, () => characterContent.Luma.name+" · "))}</small></span>`;
       const href = i===0 && !story.viewed.includes("first-spark") && !presentation(story).skipScenes ? "#story-intro" : storyLink(id);
       return `<li>${available(story,id)?`<a href="${href}">${content}<span aria-hidden="true">→</span></a>`:`<div aria-disabled="true">${content}<span>Locked</span></div>`}</li>`;
     }).join("")}</ol><div class="story-actions"><a href="#story-archive">Read the Current Archive →</a>${stage>=4?'<a href="#story-survey">Survey the aqueduct</a>':""}</div></section>`;
@@ -67,7 +68,7 @@ export function archive(main:HTMLElement, story:StorySave, storage?:Storage) {
   main.className="story-screen";
   main.innerHTML=`<section class="story-page living-archive">
     <a href="#story-aero" class="story-back">← Aero Haven</a><h1>The Current Archive</h1>
-    <p>Luma keeps a record of what the aqueduct reveals. Each new connection adds an entry.</p>
+    <p>${html(characterContent.Luma.name)} keeps a record of what the aqueduct reveals. Each new connection adds an entry.</p>
     <a href="#story-intro">Replay opening film →</a><div class="archive-cards">${entries.length?entries.map((entry,i)=>`<article>
       <span class="archive-symbol ${entry.icon}" aria-hidden="true"></span>
       <div><small>Aero Haven · Circuit 1-${i+1}</small><h2>${html(entry.clue)}</h2><p>${html(entry.fragment)}</p>
