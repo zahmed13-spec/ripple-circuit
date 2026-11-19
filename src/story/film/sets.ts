@@ -1,3 +1,4 @@
+import type { WorldTheme } from "../themes";
 import * as T from "three";
 import type { Effect, Vec3 } from "./boards";
 import { cel, fill, type Own } from "./rigs";
@@ -21,21 +22,23 @@ export class FilmSet {
   private spill?:T.Mesh;
   private surface:T.ShaderMaterial;
   private sky:T.ShaderMaterial;
+  private themedSky=0;
   private readonly pale=new T.Color("#dff8f1");
   private readonly dark=new T.Color("#3d476e");
   private readonly shade=new T.Color();
   private readonly hazy=new T.Color("#cbf7eb");
   private readonly violet=new T.Color("#756c92");
-  constructor(private scene:T.Scene,private own:Own,private ramp:T.DataTexture,private eco:boolean,private seal?:T.Object3D) {
+  constructor(private scene:T.Scene,private own:Own,private ramp:T.DataTexture,private eco:boolean,private seal?:T.Object3D, theme?:WorldTheme, low=false) {
+    if(theme){this.themedSky=1;this.hazy.set(theme.fog);this.violet.set(theme.sky);this.pale.set(theme.restored);this.dark.set(theme.dormant);}
     const scenery=new T.Group();
     scene.add(scenery,this.fracture);
     this.sky=own(new T.ShaderMaterial({
       side:T.BackSide,depthWrite:false,
-      uniforms:{energy:{value:1},warm:{value:eco?.38:0},storm:{value:0}},
+      uniforms:{energy:{value:1},warm:{value:eco?.38:0},storm:{value:0},skyTint:{value:new T.Color(theme?.sky??"#ffffff")},tinted:{value:theme?1:0}},
       vertexShader:`varying vec3 direction;
         void main(){ direction=normalize(position); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
       fragmentShader:`
-        varying vec3 direction; uniform float energy, warm, storm;
+        varying vec3 direction; uniform float energy, warm, storm, tinted; uniform vec3 skyTint;
         void main(){
           vec3 d=normalize(direction);
           float h=smoothstep(-.16,.58,d.y);
@@ -43,6 +46,7 @@ export class FilmSet {
           zenith=mix(zenith,vec3(.20,.66,.51),warm);
           vec3 horizon=mix(vec3(.48,.50,.67),vec3(.73,.95,.92),energy);
           vec3 sky=mix(horizon,zenith,h);
+          sky=mix(sky,skyTint * (.55+h*.24+energy*.22),tinted*.65);
           vec3 sun=normalize(vec3(-.54,.43,-.76));
           float halo=pow(max(0.,dot(d,sun)),13.);
           float disk=smoothstep(.997,.999,dot(d,sun));
@@ -54,6 +58,7 @@ export class FilmSet {
     }));
     scene.add(new T.Mesh(own(new T.SphereGeometry(64,36,24)),this.sky));
     this.surface=own(new T.ShaderMaterial({
+      defines:low?{LOW_DETAIL:1}:{},
       uniforms:{clock:{value:0},energy:{value:1},plant:{value:eco?1:0}},
       vertexShader:`
         varying vec2 p;
@@ -62,8 +67,13 @@ export class FilmSet {
         varying vec2 p; uniform float clock, energy, plant;
         void main(){
           float broad=sin(p.x*.24+p.y*.28+sin(p.x*.14)-clock*.36);
-          float foam=smoothstep(.91,.99,sin(p.y*1.9 + sin(p.x*.45+clock*.3)*.7 -clock*1.35));
-          float mesh=smoothstep(.94,1.,sin(p.x*2.1 + p.y*.22 + clock*.57));
+          #ifdef LOW_DETAIL
+            float foam=smoothstep(.93,1.,sin(p.y*1.9-clock*1.35));
+            float mesh=.55;
+          #else
+            float foam=smoothstep(.91,.99,sin(p.y*1.9 + sin(p.x*.45+clock*.3)*.7 -clock*1.35));
+            float mesh=smoothstep(.94,1.,sin(p.x*2.1 + p.y*.22 + clock*.57));
+          #endif
           vec3 low=vec3(.06,.30,.48), high=vec3(.09,.63,.71);
           low=mix(low,vec3(.11,.33,.24),plant);
           high=mix(high,vec3(.32,.64,.31),plant);
@@ -78,14 +88,14 @@ export class FilmSet {
     seabed.position.y=-3.65;
     scene.add(seabed);
 
-    const sphere=own(new T.SphereGeometry(1,18,12));
+    const sphere=own(new T.SphereGeometry(1,low?12:18,low?8:12));
     const cloudInk=fill(own,"#e3fcff");
     const mistInk=own(new T.MeshBasicMaterial({color:"#bee1f4",transparent:true,opacity:.69,depthWrite:false}));
-    for(let i=0;i<9;i++){
+    for(let i=0;i<(low?5:9);i++){
       const cloud=new T.Group();
       cloud.position.set((i%5-2)*9,2.4+(i%3)*2.6,-15-Math.floor(i/5)*10);
       cloud.userData.origin=cloud.position.x;
-      for(let j=0;j<4;j++){
+      for(let j=0;j<(low?2:4);j++){
         const puff=new T.Mesh(sphere,j===0?mistInk:cloudInk);
         puff.position.set((j-1.5)*1.2,(j%2)*.32,0);
         puff.scale.set(1.85+j*.12,.32+(j%3)*.19,.84);
@@ -103,7 +113,7 @@ export class FilmSet {
     const box=own(new T.BoxGeometry(1,1,1));
     const cylinder=own(new T.CylinderGeometry(1,.78,1,12));
     const rock=own(new T.DodecahedronGeometry(1,0));
-    const torus=own(new T.TorusGeometry(1,.06,7,42));
+    const torus=own(new T.TorusGeometry(1,.06,low?5:7,low?26:42));
     const jewel=own(new T.OctahedronGeometry(1));
     const glass=own(new T.MeshToonMaterial({color:eco?"#c7fff1":"#9deeee",gradientMap:ramp,transparent:true,opacity:.43,depthWrite:false,side:T.DoubleSide}));
     const neon=fill(own,"#affff1");
@@ -130,13 +140,33 @@ export class FilmSet {
         part(box,palette.gold,[x+side*(w/2-.30),y+.085,z-d/2+.18],[.18,.12,.18]);
       }
     };
-    for(let i=0;i<7;i++){
+    for(let i=0;i<(low?5:7);i++){
       const x=(i-3)*5.3; const z=-18-(i%3)*3;
       island(x,-.8+(i%3)*.6,z,1.9+(i%2)*.45);
       part(box,palette.chalk,[x,.1+(i%3)*.6,z],[.3,1.28,.35]);
       part(jewel,palette.gem,[x,1+(i%3)*.6,z],[.30,.55,.29]);
     }
 
+    if(theme?.id==="terra"){
+      for(let i=0;i<5;i++){
+        const x=-4.5+i*1.4;
+        const crystal=part(jewel,cel(own,ramp,i%2?theme.restored:"#a36c54"),[x,.91+i%3*.47,-8.3],[.54,1.38+i%3*.41,.65]);
+        crystal.rotation.z=(i-2)*.17;
+      }
+    } else if(theme?.id==="metro"){
+      for(let i=0;i<5;i++){
+        const x=-4+i*2.1;
+        part(box,palette.chalk,[x,1.2,-8.25],[.93,2.8+i%2*1.2,.95]);
+        part(torus,neon,[x,1.98,-7.71],[.56,.56,.72]);
+      }
+      part(box,palette.edge,[.2,.4,-7.82],[9.8,.34,.81]);
+    } else if(theme?.id==="null"){
+      for(let i=0;i<5;i++){
+        const x=(i-2)*2.1;
+        const darkGlass=cel(own,ramp,i%2?"#49335e":"#ad6794");
+        part(jewel,darkGlass,[x,1.12+i%3*.49,-7.7],[.62,1.12,.56]).rotation.z=(i-2)*.32;
+      }
+    }
     if(eco){
       deck(-2.5,0,1.15,5.8,3);
       island(2.5,.2,-3.75,3.1);
@@ -231,6 +261,9 @@ export class FilmSet {
       this.wave.rotation.x=-Math.PI/2;
     }
 
+    const animated=new Set<T.Object3D|undefined>([this.growth,this.screen,this.warning?.mesh,...this.shutters]);
+    this.instanceBackdrop(scenery,animated);
+
     const lightGeometry=own(new T.IcosahedronGeometry(.106,0));
     const lightColor=fill(own,"#f8ffe3");
     const routes:readonly [readonly Vec3[],number,string][] = eco ? [
@@ -267,6 +300,34 @@ export class FilmSet {
       const shard=part(jewel,i%3===0?nullEdge:nullGlass,[0,0,0],[.13,.65,.08],this.fracture);
       shard.userData.theta=i*Math.PI*2/8;
     }
+  }
+
+  private instanceBackdrop(group:T.Group, animated:ReadonlySet<T.Object3D|undefined>) {
+    const batches=new Map<string,T.Mesh[]>();
+    for(const object of group.children){
+      if(!(object instanceof T.Mesh) || object.children.length || animated.has(object) ||
+        Array.isArray(object.material) || object.material.transparent)continue;
+      const key=object.geometry.id+":"+object.material.id;
+      const batch=batches.get(key);
+      if(batch)batch.push(object);
+      else batches.set(key,[object]);
+    }
+    for(const batch of batches.values()){
+      const [first]=batch;
+      if(batch.length<2)continue;
+      const meshes=this.own(new T.InstancedMesh(first.geometry,first.material,batch.length));
+      batch.forEach((mesh,index)=>{
+        mesh.updateMatrix();
+        meshes.setMatrixAt(index,mesh.matrix);
+      });
+      meshes.computeBoundingSphere();
+      group.remove(...batch);
+      group.add(meshes);
+    }
+  }
+
+  showRestoredWorld(active:boolean) {
+    this.sky.uniforms.tinted.value=active?0:this.themedSky;
   }
 
   showWarning(text:string) {

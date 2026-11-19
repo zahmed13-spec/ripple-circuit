@@ -4,7 +4,7 @@ import type { Block } from "../scene/arena";
 import { aero, type StoryId } from "./chapters";
 
 export type StoryLevel = NativeLevel & {
-  version: 4;
+  version: 4 | 6;
   storyId: StoryId;
   narrative: string;
   mechanics: readonly string[];

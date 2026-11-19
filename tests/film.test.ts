@@ -1,13 +1,13 @@
 import {describe,expect,test} from "vitest";
-import {aftermath, films, sceneIds} from "../src/story/film/boards";
+import {aftermath, films, legacyFilms, sceneIds} from "../src/story/film/boards";
 import {mouthAt,poseAt, sample} from "../src/story/film/timeline";
 import {validateContent} from "../scripts/check-content";
 import {loadStory,markViewed} from "../src/story/save";
 
 describe("animated shot boards",()=>{
-  test("all eight films have unique IDs, valid cues, and more than one shot",()=>{
-    expect(sceneIds).toHaveLength(8);
-    expect(new Set(sceneIds).size).toBe(8);
+  test("all 32 films have unique IDs, valid cues, and more than one shot",()=>{
+    expect(sceneIds).toHaveLength(32);
+    expect(new Set(sceneIds).size).toBe(32);
     for(const film of Object.values(films)){
       expect(film.shots.length).toBeGreaterThan(2);
       expect(film.shots.some(s=>s.luma.length>1)).toBe(true);
@@ -29,7 +29,7 @@ describe("animated shot boards",()=>{
   });
   test("published film runtimes include all shots and transitions",()=>{
     const ranges = [[30,40],[15,18],[15,18],[18,20],[18,20],[20,25],[18,20],[18,25]];
-    Object.values(films).forEach((film, index)=>{
+    Object.values(legacyFilms).forEach((film, index)=>{
       const runtime = film.shots.reduce((seconds, shot)=>seconds+shot.seconds,0);
       expect(runtime).toBeGreaterThanOrEqual(ranges[index][0]);
       expect(runtime).toBeLessThanOrEqual(ranges[index][1]);

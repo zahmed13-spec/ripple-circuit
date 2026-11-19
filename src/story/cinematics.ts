@@ -1,7 +1,7 @@
 import { characterContent, html } from "../content";
 import type { Save } from "../services/storage";
 import { motif } from "../services/audio";
-import { isStoryId, storyLink } from "./chapters";
+import { chapterHash, isStoryId, storyLink } from "./chapters";
 import { markViewed, persistStory, presentation, type StorySave } from "./save";
 import { films, type FilmRoute } from "./film/boards";
 import { FilmStage } from "./film/stage";
@@ -18,16 +18,17 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
   }
   const film=films[route], options=presentation(story);
   const isEco=route==="story-eco";
+  const world="world" in film ? film.world : undefined;
   const soundscape=new Soundscape(()=>options.music);
   const viewportMotion=matchMedia("(prefers-reduced-motion: reduce)");
   const reduced=()=>save.settings.reduced||viewportMotion.matches;
-  const ticket=film.next;
+  const ticket=isEco?"story-eco-opening":film.next;
   const returnLink= isStoryId(ticket)?storyLink(ticket)
     : ticket==="story-survey"&&(options.skipScenes||story.viewed.includes(films["story-survey"].id))
       ?storyLink("aero-5"):"#"+ticket;
   main.className=`story-screen ${options.largeText?"living-large-text":""}`;
   main.innerHTML=`<section class="story-page living-cinematic film-page ${isEco?"living-eco":""}">
-    <div class="film-heading"><div><a href="#story-aero" class="story-back">← Aero Haven</a>
+    <div class="film-heading"><div><a href="#${world ? chapterHash(world) : "story-aero"}" class="story-back">← ${world ? html(film.chapter) : "Aero Haven"}</a>
     <p class="eyebrow">${html(film.chapter)}</p><h1>${html(film.title)}</h1></div>
     <span>Animated story<br>Subtitles</span></div>
     <div class="film-frame">
@@ -63,7 +64,7 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
   try {
     let quality:string|null|undefined;
     try{quality=storage?.getItem("ripple-graphics");}catch{}
-    renderer=new FilmStage(canvas,isEco,quality==="high"?"high":quality==="medium"?"medium":"low",cast);
+    renderer=new FilmStage(canvas,isEco||world==="eco",quality==="high"?"high":quality==="medium"?"medium":"low",cast,world);
   } catch {
     if(cast)for(const resource of cast.resources)resource.dispose();
     fallback.hidden=false;
@@ -157,7 +158,7 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
     if(markViewed(story,film.id))persistStory(story,storage);
     dip.style.opacity="0";
     setPaused(true);
-    skip.textContent=isEco?"Return to Aero Haven":"Continue the story";
+    skip.textContent=isEco?"Continue to Eco Canopy":"Continue the story";
   }
   toggle.onclick=()=>{
     requestSound();
@@ -190,8 +191,7 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
     soundscape.setActive(active&&!paused&&options.music);
     if(active&&!paused){
       elapsed=Math.min(runtime,elapsed+dt);
-      // 30 fps camera and water, plus deliberate 15 fps character poses.
-      if(elapsed-lastRender>=.031||elapsed===runtime)refresh();
+      refresh();
       if(elapsed===runtime)end();
     }
     if(!paused)frame=requestAnimationFrame(loop);

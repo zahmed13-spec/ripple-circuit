@@ -129,3 +129,29 @@
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media(max-width:540px){.film-heading>span{display:none}.film-heading h1{font-size:clamp(2.2rem,10vw,3.8rem)}.film-frame{aspect-ratio:4/3}.film-lettering{left:5px;right:5px;bottom:5px;padding:6px}.film-captions{min-height:97px;grid-template-columns:1fr;align-content:start;gap:3px;padding:9px 11px}.film-captions p{font-size:.89rem}.film-transport{gap:4px}.film-transport button{min-width:28px;padding:2px 4px;font-size:.75rem}.film-transport time{font-size:.56rem}}
 .film-dip{position:absolute;inset:0;pointer-events:none;background:#102748;z-index:1;opacity:0}
+
+/* Independent compositor animations over the original illustrated landscape. */
+#app { isolation:isolate; }
+.landscape { position:fixed; z-index:-1; inset:0; overflow:hidden; pointer-events:none; contain:strict; }
+.sky-glow { position:absolute; width:min(60vw,850px); aspect-ratio:1; right:-9%; top:-31%; background:radial-gradient(circle,#fff5cba6,transparent 67%); animation:sun-breathe 31s ease-in-out infinite alternate; }
+.sky-cloud { position:absolute; left:var(--x); top:var(--y); width:clamp(95px,16vw,245px); height:clamp(28px,5.4vw,84px); opacity:.58; border-radius:70% 65% 50% 52%; background:radial-gradient(ellipse at 33% 39%,white 4%,#f8ffffd9 47%,#cefaff00 72%); box-shadow:-2.5vw 1vw 2vw -1.3vw #e8fcffaa; animation:cloud-breeze var(--duration) var(--delay) ease-in-out infinite alternate; }
+.sky-cloud::before { content:""; position:absolute; inset:-35% 20% 15% 10%; border-radius:60%; background:radial-gradient(ellipse,#fff,#effdff80 50%,transparent 72%); }
+.sky-grass { position:absolute; bottom:0; width:100%; height:clamp(22px,8vh,92px); fill:#3d981e80; opacity:.72; }
+.sky-grass path { transform-origin:0 0; animation:grass-breeze var(--sway) var(--delay) ease-in-out infinite; }
+.sky-grass g:nth-child(3n) { fill:#84d748ad; }
+.sky-bubble { position:absolute; top:var(--y); left:100%; width:var(--size); aspect-ratio:1; border-radius:50%; border:1px solid #f8ffffaf; box-shadow:inset 3px -4px 8px #8cf8e977,inset -4px 2px 7px #ba98f58c,1px 2px 12px #a9fff577; background:radial-gradient(ellipse at 29% 23%,#fff 0 3%,#fff9 4%,transparent 15%),radial-gradient(ellipse at 73% 81%,#e0ffffa0 0 3%,transparent 18%); animation:bubble-west var(--duration) var(--delay) linear infinite; }
+@keyframes cloud-breeze { from {transform:translate3d(-13vw,0,0)} to {transform:translate3d(12vw,-1.1vh,0)} }
+@keyframes sun-breathe { from {opacity:.43} to {opacity:.82} }
+@keyframes grass-breeze { 0%,100% {transform:skewX(-2deg) scaleY(.92)} 45%,62% {transform:skewX(-16deg) scaleY(1)} }
+@keyframes bubble-west { 0%,12% {opacity:0;transform:translate3d(8vw,0,0)} 20% {opacity:.68} 38% {transform:translate3d(-33vw,calc(var(--drift) * .24),0)} 59% {transform:translate3d(-67vw,calc(var(--drift) * .82),0)} 76% {opacity:.64} 89%,100% {opacity:0;transform:translate3d(calc(-100vw - 110px),var(--drift),0)} }
+.landscape-paused .landscape * { animation-play-state:paused; }
+@media(max-width:600px) { .sky-cloud:nth-of-type(even),.sky-bubble:nth-of-type(even),.sky-grass g:nth-child(even) {display:none} }
+@media(prefers-reduced-motion:reduce) { .landscape * { animation:none!important; } .sky-bubble {display:none} }
+.reduced .sky-bubble,.contrast .landscape { display:none; }
+/* Glass framing shared by classic, sprint, daily and native boards. */
+.play-section { background:linear-gradient(155deg,#f9fffff2,#c7edf1d9 66%,#d9f8ed); border-color:#ffffffd9; }
+.arena-wrap { box-shadow:0 0 0 1px #399bb77a,0 0 0 4px #ffffff70,0 12px 23px #1a75862a; }
+.daily-status { border-radius:14px; background:linear-gradient(105deg,#d7fff2,#e4f7ff); }
+.primary:focus-visible,.secondary:focus-visible,a:focus-visible { outline:3px solid #155f8b; outline-offset:3px; }
+.primary:active,.secondary:active { transform:translateY(1px); }
+.contrast .play-section { background:#fff; }

@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { films } from "../src/story/film/boards";
+import { legacyFilms as films } from "../src/story/film/boards";
 import { characterContent, dialogueContent, levelContent, siteContent, worldContent } from "../src/content";
 import cinema from "../src/content/cinematics.json" with { type: "json" };
 import dialogue from "../src/content/dialogue.json" with { type: "json" };

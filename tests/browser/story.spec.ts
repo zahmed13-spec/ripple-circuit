@@ -11,7 +11,7 @@ test("story map handles invalid and locked routes and an opening can be skipped"
   await expect(page.getByText("Unknown story circuit. Choose a level from Aero Haven.")).toBeVisible();
   await page.getByRole("link",{name:"World map"}).press("Enter");
   await expect(page.getByRole("heading",{name:"The Fractured Ripple"})).toBeVisible();
-  await expect(page.getByText("Future region · Locked")).toHaveCount(4);
+  await expect(page.locator(".story-world").getByText("Locked",{exact:true})).toHaveCount(4);
   await page.getByRole("link",{name:"Enter Aero Haven"}).press("Enter");
   await page.getByRole("link",{name:"Begin story"}).press("Enter");
   await expect(page.locator("#film-line").filter({hasText:/Before the silence, every island/})).toBeVisible();

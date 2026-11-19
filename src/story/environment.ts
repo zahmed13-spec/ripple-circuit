@@ -1,3 +1,4 @@
+import { Biome } from "../scene/biome";
 import * as T from "three";
 import type { Current } from "../native/physics";
 import type { Arena3D } from "../scene/arena";
@@ -20,7 +21,8 @@ export class StoryEnvironment {
   private luma: Luma;
   private scenery?: AeroScenery;
   private phase = 0;
-  private landmarks: Landmarks;
+  private landmarks?: Landmarks;
+  private biome?: Biome;
   private time = 0;
   private stage = -1;
   private signal = "";
@@ -66,7 +68,8 @@ export class StoryEnvironment {
     water.rotation.x=-Math.PI/2;
     water.position.y=-3.36;
     decor.add(water);
-    this.landmarks=new Landmarks(arena,decor,theme);
+    if(theme.id==="aero")this.landmarks=new Landmarks(arena,decor,theme);
+    this.biome=new Biome(arena,theme.id as ConstructorParameters<typeof Biome>[1],spec.level??1);
     if (theme.id === "aero" && spec.level) {
       this.scenery = new AeroScenery(arena, decor, spec.level);
     }
@@ -108,7 +111,7 @@ export class StoryEnvironment {
     const active = [];
     for (const {spec,material,arrows} of this.streams) {
       const on = !spec.switchId || activated.includes(spec.switchId);
-      material.color.set(on ? "#20cdd7" : this.spec.theme.dormant);
+      material.color.set(on ? spec.kind==="gravity" ? "#e7a849" : "#20cdd7" : this.spec.theme.dormant);
       material.opacity = on ? .66 : .27;
       arrows.visible = on;
       if (on) active.push(spec.id);
@@ -125,8 +128,9 @@ export class StoryEnvironment {
     if(stage===this.stage&&signal===this.signal)return;
     this.stage=stage;
     this.signal=signal;
-    this.landmarks.set(stage,signal);
+    this.landmarks?.set(stage,signal);
     this.scenery?.setPower(stage,this.phase);
+    this.biome?.power(stage,this.phase);
     this.arena.canvas.dataset.stage=String(stage);
     this.arena.canvas.dataset.restored=String(stage===5);
     this.arena.canvas.dataset.signal=signal;
@@ -135,8 +139,9 @@ export class StoryEnvironment {
 
   setPhase(phase:number) {
     this.phase = phase;
-    this.landmarks.setPhase(phase);
+    this.landmarks?.setPhase(phase);
     this.scenery?.setPower(this.stage,phase);
+    this.biome?.power(this.stage,phase);
     this.arena.dirty = true;
   }
 
@@ -152,8 +157,9 @@ export class StoryEnvironment {
     this.ocean.uniforms.time.value=reduced?0:this.time;
     this.ocean.uniforms.energy.value=this.stage/5;
     this.ocean.uniforms.detail.value=low?0:1;
-    this.landmarks.animate(dt,this.time,reduced,low);
+    this.landmarks?.animate(dt,this.time,reduced,low);
     this.scenery?.animate(this.time,reduced,this.arena.quality);
+    this.biome?.animate(this.time,reduced,this.arena.quality);
     this.clouds.forEach((cloud,index)=>{
       cloud.position.x=cloud.userData.cloudX+(reduced||low?0:Math.sin(this.time*.09+index)*.64);
     });

@@ -1,14 +1,16 @@
+import { liftOffset } from "./machinery";
 import R from "@dimforge/rapier3d-compat";
 import type { Block, SceneData, SceneOrb } from "../scene/arena";
 export const ready = R.init();
 export const ENGINE = "rapier-0.21.0-rc3.1";
 export type Vec = { x: number; y: number; z: number };
 export type Input = Vec & { tick: number; surface: string };
+export const EXPANSION_ENGINE = "rapier-0.21.0-rc6.1";
 export const STORY_ENGINE = "rapier-0.21.0-rc4.1";
-export type Current = { id: string; x: number; y: number; z: number; w: number; d: number; force: Vec; switchId?: string };
+export type Current = { id: string; x: number; y: number; z: number; w: number; d: number; force: Vec; switchId?: string; kind?: "gravity" };
 export type NativeLevel = {
   id: number;
-  version: 3 | 4;
+  version: 3 | 4 | 6;
   title: string;
   chapter: string;
   hint: string;
@@ -20,6 +22,7 @@ export type NativeLevel = {
   pulseLimit: number;
   solution: Input[];
   currents?: Current[];
+  gravityZones?: Current[];
   requiredSwitches?: string[];
 };
 export const LIMIT = 7200,
@@ -27,7 +30,7 @@ export const LIMIT = 7200,
 export function validate(l: NativeLevel) {
   const errors: string[] = [];
   const finite = (...n: number[]) => n.every(Number.isFinite);
-  if (![3, 4].includes(l.version) || !Number.isInteger(l.id) || l.id < 1)
+  if (![3, 4, 6].includes(l.version) || !Number.isInteger(l.id) || l.id < 1)
     errors.push("version");
   if (l.pulseLimit < 1 || l.pulseLimit > 8 || !Number.isInteger(l.pulseLimit))
     errors.push("limit");
@@ -51,8 +54,11 @@ export function validate(l: NativeLevel) {
       errors.push("block bounds");
     if (b.rotation && !finite(...Object.values(b.rotation)))
       errors.push("rotation");
-    if (b.kind === "gate" && !l.switches.some((s) => s.id === b.switchId))
+    if ((b.kind === "gate" || b.kind === "bridge") && !b.cycle && !l.switches.some((s) => s.id === b.switchId))
       errors.push("gate");
+    if ((b.cycle || b.lift || b.kind === "bridge") && l.version !== 6) errors.push("expansion mechanism");
+    if (b.cycle && (b.kind !== "gate" || !Object.values(b.cycle).every(Number.isInteger) || b.cycle.period < 2 || b.cycle.open < 1 || b.cycle.open >= b.cycle.period || b.cycle.offset < 0)) errors.push("gate cycle");
+    if (b.lift && (b.kind !== "lift" || !Number.isInteger(b.lift.period) || !Number.isInteger(b.lift.hold) || !Number.isInteger(b.lift.offset) || b.lift.hold < 1 || b.lift.period <= b.lift.hold || b.lift.offset < 0 || !finite(b.lift.distance) || b.lift.distance<=0 || b.lift.distance>2)) errors.push("lift cycle");
   }
   for (const o of l.orbs) {
     if (!finite(o.x, o.y, o.z, o.radius) || o.radius <= 0 || o.radius > 1)
@@ -66,7 +72,8 @@ export function validate(l: NativeLevel) {
   if ((l.currents?.length ?? 0) > 12 ||
       new Set(l.currents?.map(c => c.id)).size !== (l.currents?.length ?? 0))
     errors.push("currents");
-  for (const c of l.currents ?? []) {
+  if (l.gravityZones && l.version !== 6) errors.push("gravity version");
+  for (const c of [...l.currents ?? [], ...l.gravityZones ?? []]) {
     if (!finite(c.x,c.y,c.z,c.w,c.d,...Object.values(c.force)) ||
         c.w <= 0 || c.d <= 0 || Math.hypot(c.force.x,c.force.y,c.force.z) > 18 ||
         c.switchId && !l.switches.some(s => s.id === c.switchId)) errors.push("current bounds");
@@ -86,6 +93,9 @@ export class Simulation {
   queue = new R.EventQueue(true);
   bodies: R.RigidBody[] = [];
   gates = new Map<string, R.Collider>();
+  bridges = new Map<string, R.Collider>();
+  lifts = new Map<string, {block:Block; body:R.RigidBody}>();
+  liftHeights=new Map<string,number>();
   sensors = new Map<string, R.Collider>();
   orbs: SceneOrb[];
   tick = 0;
@@ -112,9 +122,22 @@ export class Simulation {
         .setFriction(0.4)
         .setRestitution(0.25);
       if (b.rotation) c = c.setRotation(b.rotation);
+      if(b.lift){
+        const y=b.y+liftOffset(b.lift,0);
+        const body=this.world.createRigidBody(R.RigidBodyDesc.kinematicPositionBased().setTranslation(b.x,y,b.z));
+        this.world.createCollider(c.setTranslation(0,0,0),body);
+        this.lifts.set(b.id,{block:b,body});
+        this.liftHeights.set(b.id,y);
+        continue;
+      }
       const collider = this.world.createCollider(c);
       if (b.kind === "gate") this.gates.set(b.id, collider);
+      if (b.kind === "bridge") {
+        collider.setEnabled(false);
+        this.bridges.set(b.id, collider);
+      }
     }
+    this.syncTimedGates();
     for (const s of level.switches) {
       this.sensors.set(
         s.id,
@@ -175,6 +198,20 @@ export class Simulation {
     this.events.push("pulse");
     return true;
   }
+  private syncTimedGates() {
+    if (this.level.version !== 6) return;
+    for (const block of this.level.blocks) {
+      if (!block.cycle) continue;
+      const { period, open, offset } = block.cycle;
+      const live = (!block.switchId || this.activated.includes(block.switchId)) &&
+        (this.tick + offset) % period < open;
+      const gate = this.gates.get(block.id)!;
+      gate.setEnabled(!live);
+      const index = this.opened.indexOf(block.id);
+      if (live && index < 0) this.opened.push(block.id);
+      if (!live && index >= 0) this.opened.splice(index, 1);
+    }
+  }
   step() {
     this.events = [];
     if (
@@ -186,9 +223,10 @@ export class Simulation {
       return;
     this.events = [];
     this.tick++;
+    this.syncTimedGates();
     for (let k = 0; k < 2; k++) {
-      if (this.level.version === 4) {
-        for (const current of this.level.currents ?? []) {
+      if (this.level.version !== 3) {
+        for (const current of [...this.level.currents ?? [], ...this.level.gravityZones ?? []]) {
           if (!currentActive(current, this.activated)) continue;
           this.bodies.forEach((body, i) => {
             const orb = this.orbs[i];
@@ -201,6 +239,11 @@ export class Simulation {
             }
           });
         }
+      }
+      for(const [id,{block,body}] of this.lifts){
+        const y=block.y+liftOffset(block.lift!,this.tick-.5+k*.5);
+        body.setNextKinematicTranslation({x:block.x,y,z:block.z});
+        this.liftHeights.set(id,y);
       }
       this.world.step(this.queue);
       this.queue.drainCollisionEvents((_a, _b, started) => {
@@ -221,7 +264,12 @@ export class Simulation {
             (b) => b.switchId === id,
           )) {
             const gate = this.gates.get(block.id);
-            if (gate) {
+            const bridge = this.bridges.get(block.id);
+            if (bridge) {
+              bridge.setEnabled(true);
+              this.opened.push(block.id);
+            }
+            if (gate && !block.cycle) {
               gate.setEnabled(false);
               this.opened.push(block.id);
             }
@@ -294,7 +342,7 @@ export function surfaceY(b: Block, x: number, z: number) {
 export function validPoint(l: NativeLevel, p: Vec, id: string) {
   if (![p.x, p.y, p.z].every(Number.isFinite)) return false;
   const b = l.blocks.find(
-    (b) => b.id === id && b.kind !== "gate" && b.kind !== "wall",
+    (b) => b.id === id && b.kind !== "gate" && b.kind !== "wall" && b.kind !== "bridge" && b.kind !== "lift",
   );
   if (!b) return false;
   const q = b.rotation || { x: 0, y: 0, z: 0, w: 1 };

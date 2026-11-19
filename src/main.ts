@@ -1,3 +1,4 @@
+import { landscape } from "./scene/landscape";
 import { html, siteContent } from './content';
 import './style.css';
 import {Arena3D,classicData,addClassicObjects,classicFrame,classicPoint} from './scene/arena';
@@ -21,7 +22,7 @@ let replayInputs=level.solution, guided=false, personalReplay=false;
 let resizeCanvas=()=>{};
 let acc=0,last=0,handled=false,opponent:ReturnType<typeof decodeRun>=null,playback=false,pb=false;
 const app=$('#app');
-app.innerHTML=`<header><a href="#home" class="brand" aria-label="Ripple Circuit home"><span class="brandmark">◎</span><span>RIPPLE<span class="brand-light"> CIRCUIT</span></span></a><nav aria-label="Main navigation"><a href="#story">Story Mode</a><a href="#depth">3D</a><a href="#levels">Circuits</a><a href="#daily">Daily <span class="dot"></span></a><a href="#how">How to play</a><button id="settings" class="icon" aria-label="Settings">⚙</button></nav></header>
+app.innerHTML=`${landscape()}<header><a href="#home" class="brand" aria-label="Ripple Circuit home"><span class="brandmark">◎</span><span>RIPPLE<span class="brand-light"> CIRCUIT</span></span></a><nav aria-label="Main navigation"><a href="#story">Story Mode</a><a href="#depth">3D</a><a href="#levels">Circuits</a><a href="#daily">Daily <span class="dot"></span></a><a href="#how">How to play</a><button id="settings" class="icon" aria-label="Settings">⚙</button></nav></header>
 <main id="main"></main><footer><span>ONE TAP. ENDLESS POSSIBILITIES.</span><div><a href="#privacy">Privacy</a><a href="#feedback">Feedback</a><span>Ripple Circuit · Local play</span></div></footer>
 <dialog id="dialog" aria-labelledby="dialog-title"></dialog><div id="toast" role="status" aria-live="polite"></div>`;
 const dialog=$<HTMLDialogElement>('#dialog');
@@ -75,7 +76,7 @@ function levelScreen(legacy=false){screen='levels';const list=legacy?levels:camp
  $('#main').className='';$('#main').innerHTML=`<section class="page"><div class="eyebrow">${legacy?'PRESERVED ORIGINAL CAMPAIGN':'RIPPLE CIRCUIT 2.0 / PUZZLE FLOW'}</div><h1>Follow the current.</h1><p>${legacy?'Every original layout and record is preserved.':'12 classic puzzles, now in a dimensional arena. <a href="#depth">Explore the native 3D campaign →</a>'}</p><a class="textlink" href="#${legacy?'levels':'legacy'}">${legacy?'New campaign':'Legacy campaign · 25 original circuits'} →</a><div class="progress"><strong>${completed}/${list.length} connected</strong><span>${list.reduce((n,l)=>n+(save.best[prefix+'-'+l.id]?.stars||0),0)}/${list.length*3} stars</span><span>${Object.keys(save.best).filter(k=>k.startsWith('d')).length} daily circuits completed</span></div><div class="level-grid">${list.map(l=>{const b=save.best[prefix+'-'+l.id],locked=l.id>unlocked;return `${[1,5,8].includes(l.id)?'<div class="chapter-heading">'+(l.id===1?'01 · Bubble Garden':l.id===5?'02 · Aqua Flow':'03 · Chain Reaction')+'<small>'+(l.id===1?'Direction, distance, timing':l.id===5?'Shared force, precision, rebounds':'Switches, gates, connected consequences')+'</small></div>':''}<button class="level ${locked?'locked':''} ${l.id===unlocked?'current':''}" data-level="${l.id}" ${locked?'disabled':''}><span class="level-num">${String(l.id).padStart(2,'0')}</span><span>${l.title}<small>${b?b.pulses+' pulses · '+(b.ticks/60).toFixed(2)+'s':l.skill||l.difficulty}</small></span><span class="level-stars">${b?'★'.repeat(b.stars)+'☆'.repeat(3-b.stars):locked?'⌑':'→'}</span></button>`;}).join('')}</div><p>Mastery: match or beat par. Par is a known solution, never an optimality claim.</p></section>`;
  document.querySelectorAll<HTMLButtonElement>('[data-level]').forEach(b=>b.onclick=()=>navigateLevel(Number(b.dataset.level),prefix));}
 function route(){const generation=++routeGeneration;nativeHandle?.dispose();nativeHandle=null;scene3?.dispose();scene3=null;if(dialog.open)dialog.close();const hash=location.hash.slice(1)||'home';
- if(['story','story-aero','story-intro','story-play','story-restored','story-eco','story-archive','story-survey','story-beacon','story-reservoir','story-directive','story-memory'].includes(hash)){
+ if(hash==='story'||hash.startsWith('story-')){
   screen='story';const main=$('#main');main.className='story-screen';main.innerHTML='<section class="page"><h1>Opening Story Mode…</h1></section>';
   void import('./story/route').then(async m=>{
    if(generation!==routeGeneration)return;
@@ -106,3 +107,5 @@ function frame(time:number){const dt=last?Math.min((time-last)/1000,.1):0;last=t
 setInterval(()=>{const seconds=Math.max(0,Math.floor((daily().reset-Date.now())/1000));const text=`Resets in ${String(Math.floor(seconds/3600)).padStart(2,'0')}:${String(Math.floor(seconds/60)%60).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')} · 00:00 UTC`;for(const id of ['#reset-time','#daily-clock'])if($(id))$(id).textContent=text;},1000);
 document.body.classList.toggle('contrast',save.settings.contrast);document.body.classList.toggle('reduced',save.settings.reduced);route();requestAnimationFrame(frame);
 if(import.meta.env.PROD&&'serviceWorker' in navigator)window.addEventListener('load',()=>{void navigator.serviceWorker.register('./sw.js').catch(()=>{});});
+
+document.addEventListener("visibilitychange",()=>document.body.classList.toggle("landscape-paused",document.hidden));
