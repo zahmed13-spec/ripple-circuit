@@ -1,0 +1,86 @@
+{
+  "levels": [
+    {
+      "id": "aero-1",
+      "title": "A New Ripple",
+      "hint": "Tap behind the marble to roll it into the matching ring.",
+      "narrative": "Luma: That spark answers you. Send it toward the ring and see what wakes up.",
+      "before": "That little receiver can't hear the Current anymore. Try sending your ripple behind the marble.",
+      "after": "It worked. You actually woke it up.",
+      "clue": "The Last Spark",
+      "fragment": "A single receiver re-established a path through the Landing Beacon."
+    },
+    {
+      "id": "aero-2",
+      "title": "The Flowing Path",
+      "hint": "Start the marble toward the bright arrows. The moving water carries it the rest of the way.",
+      "narrative": "Luma: The water still remembers where to go.",
+      "before": "The water remembers its path. It just needs a little help to reach the reservoir.",
+      "after": "There it goes. I almost forgot how the reservoir sounded.",
+      "clue": "The Dormant Aqueduct",
+      "fragment": "The Glass Reservoir still held enough water to feed the islands."
+    },
+    {
+      "id": "aero-3",
+      "title": "Beneath the Surface",
+      "hint": "Aim on the upper terrace. The ramp drops to a lower current that carries the marble home.",
+      "narrative": "Luma: The channel runs under this terrace. Follow the water down.",
+      "before": "There’s a mark on the lower channel. I can almost read it from here.",
+      "after": "Interrupted? That's strange. Someone told the water to stop.",
+      "clue": "Stability Directive",
+      "fragment": "STABILITY DIRECTIVE: FLOW INTERRUPTED."
+    },
+    {
+      "id": "aero-4",
+      "title": "Reconnect the Stream",
+      "hint": "Send marble 1 across the pressure plate. Once the lower channel lights up, send marble 2 through it.",
+      "narrative": "Luma: A disconnected route can still carry power. Check that plate.",
+      "before": "These paths depend on each other. We have to wake them in the right order.",
+      "after": "I remember this sound. It used to mean everything was connected.",
+      "clue": "Luma’s Memory",
+      "fragment": "The relay chime belonged to the old network. Luma remembers the sound, though its source is still unfamiliar."
+    },
+    {
+      "id": "aero-5",
+      "title": "Guardian of the Aqueduct",
+      "hint": "Reconnect the intake, relay, and crown. Each plate powers the next channel. Dock all three marbles.",
+      "narrative": "Luma: The aqueduct is its own guardian. Give each part of the network a path to the next.",
+      "before": "Intake feeds the relay. The relay feeds the crown. I remember the pattern… and I don't remember why it frightens me.",
+      "after": "We brought the water back. Did you see the green light?",
+      "clue": "The Eco Signal",
+      "fragment": "The Crown received a return pulse from Eco Canopy, then a warning about uncontrolled growth."
+    }
+  ],
+  "milestones": [
+    {
+      "name": "Dormant",
+      "landmark": "Aqueduct offline",
+      "detail": "Only residual flow reaches the islands."
+    },
+    {
+      "name": "First Spark",
+      "landmark": "Landing Beacon",
+      "detail": "A signal reaches the first island."
+    },
+    {
+      "name": "Water Returns",
+      "landmark": "Glass Reservoir",
+      "detail": "Water spills from the reservoir into the Current."
+    },
+    {
+      "name": "Hidden Connection",
+      "landmark": "Observation Terminal",
+      "detail": "The terminal traces a concealed branch of the network."
+    },
+    {
+      "name": "Aqueduct Awakening",
+      "landmark": "Relay Turbine",
+      "detail": "The turbine turns and the Crown begins to pulse."
+    },
+    {
+      "name": "Aero Haven Restored",
+      "landmark": "Aqueduct Crown",
+      "detail": "The Crown sends a live signal to Eco Canopy."
+    }
+  ]
+}

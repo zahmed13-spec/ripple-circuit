@@ -1,0 +1,245 @@
+# Content editing for app.pagescms.org. GitHub Pages hosts the game.
+media:
+  - name: art
+    label: World art
+    input: public/assets
+    output: /assets
+    categories: [image]
+content:
+  - name: dialogue
+    label: "Story & Dialogue"
+    type: file
+    format: json
+    path: src/content/dialogue.json
+    fields:
+      - name: "lines"
+        label: "Lines"
+        type: "object"
+        required: true
+        list: true
+        fields:
+          - name: "id"
+            label: "Id"
+            type: "string"
+            required: true
+            readonly: true
+          - name: "speaker"
+            label: "Speaker"
+            type: "select"
+            required: true
+            options: {"values": ["Luma", "System"]}
+          - name: "text"
+            label: "Text"
+            type: "text"
+            required: true
+          - name: "emotion"
+            label: "Performance direction"
+            readonly: true
+            type: "select"
+            required: true
+            options: {"values": ["neutral", "excited", "curious", "concerned", "thoughtful", "determined", "relieved"]}
+          - name: "start"
+            label: "Subtitle start (seconds)"
+            readonly: true
+            type: "number"
+            required: true
+  - name: cinematics
+    label: "Cinematics"
+    type: file
+    format: json
+    path: src/content/cinematics.json
+    fields:
+      - name: "films"
+        label: "Films"
+        type: "object"
+        required: true
+        list: true
+        fields:
+          - name: "id"
+            label: "Id"
+            type: "string"
+            required: true
+            readonly: true
+          - name: "title"
+            label: "Title"
+            type: "string"
+            required: true
+          - name: "shots"
+            label: "Shots"
+            type: "object"
+            required: true
+            list: true
+            fields:
+              - name: "id"
+                label: "Id"
+                type: "string"
+                required: true
+                readonly: true
+              - name: "label"
+                label: "Label"
+                type: "string"
+                required: true
+  - name: characters
+    label: "Characters"
+    type: file
+    format: json
+    path: src/content/characters.json
+    fields:
+      - name: "characters"
+        label: "Characters"
+        type: "object"
+        required: true
+        list: true
+        fields:
+          - name: "id"
+            label: "Id"
+            type: "string"
+            required: true
+            readonly: true
+          - name: "name"
+            label: "Name"
+            type: "string"
+            required: true
+  - name: levels
+    label: "Puzzles & Archive"
+    type: file
+    format: json
+    path: src/content/levels.json
+    fields:
+      - name: "levels"
+        label: "Levels"
+        type: "object"
+        required: true
+        list: true
+        fields:
+          - name: "id"
+            label: "Id"
+            type: "string"
+            required: true
+            readonly: true
+          - name: "title"
+            label: "Title"
+            type: "string"
+            required: true
+          - name: "hint"
+            label: "Hint"
+            type: "text"
+            required: true
+          - name: "narrative"
+            label: "Narrative"
+            type: "text"
+            required: true
+          - name: "before"
+            label: "Before"
+            type: "text"
+            required: true
+          - name: "after"
+            label: "After"
+            type: "text"
+            required: true
+          - name: "clue"
+            label: "Clue"
+            type: "string"
+            required: true
+          - name: "fragment"
+            label: "Fragment"
+            type: "text"
+            required: true
+      - name: "milestones"
+        label: "Milestones"
+        type: "object"
+        required: true
+        list: true
+        fields:
+          - name: "name"
+            label: "Name"
+            type: "string"
+            required: true
+          - name: "landmark"
+            label: "Landmark"
+            type: "string"
+            required: true
+          - name: "detail"
+            label: "Detail"
+            type: "text"
+            required: true
+  - name: worlds
+    label: "Worlds"
+    type: file
+    format: json
+    path: src/content/worlds.json
+    fields:
+      - name: "worlds"
+        label: "Worlds"
+        type: "object"
+        required: true
+        list: true
+        fields:
+          - name: "id"
+            label: "Id"
+            type: "string"
+            required: true
+            readonly: true
+          - name: "title"
+            label: "Title"
+            type: "string"
+            required: true
+          - name: "subtitle"
+            label: "Subtitle"
+            type: "text"
+            required: true
+          - name: "objective"
+            label: "Objective"
+            type: "text"
+            required: true
+          - name: "mechanic"
+            label: "Mechanic"
+            type: "string"
+            required: true
+          - name: "accent"
+            label: "Accent"
+            type: "string"
+            required: true
+          - name: "sky"
+            label: "Sky"
+            type: "string"
+            required: true
+  - name: site
+    label: "Site Content"
+    type: file
+    format: json
+    path: src/content/site.json
+    fields:
+      - name: "title"
+        label: "Title"
+        type: "string"
+        required: true
+      - name: "description"
+        label: "Description"
+        type: "text"
+        required: true
+      - name: "homeTitle"
+        label: "Home Title"
+        type: "string"
+        required: true
+      - name: "homeEmphasis"
+        label: "Home Emphasis"
+        type: "string"
+        required: true
+      - name: "homeIntro"
+        label: "Home Intro"
+        type: "text"
+        required: true
+      - name: "storyTitle"
+        label: "Story Title"
+        type: "string"
+        required: true
+      - name: "storyIntro"
+        label: "Story Intro"
+        type: "text"
+        required: true
+      - name: "worldImage"
+        label: "Worldimage"
+        type: "image"
+        required: true
+        options: {"media": "art"}

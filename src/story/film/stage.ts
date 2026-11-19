@@ -72,7 +72,7 @@ export class FilmStage {
     }
     const phase=clamp(time/shot.seconds);
     const [start,end=start]=shot.lens;
-    const t=reduced?.4:ease(phase);
+    const t=reduced ? .4 : ease(clamp((time-.12)/(shot.seconds-.68)));
     for(let axis=0;axis<3;axis++){
       this.focus.setComponent(axis,mix(start[0][axis],end[0][axis],t));
       this.offset.setComponent(axis,mix(start[1][axis],end[1][axis],t));
@@ -89,6 +89,8 @@ export class FilmStage {
     this.key.color.setHex(energy>.8?0xfff1c3:0xe4f7ff);
     if(this.mixer)this.mixer.setTime((reduced?.32:phase*.98)*this.clipDuration);
     this.set.apply(shot.effect,energy,time,phase,reduced);
+    const line=shot.line;
+    this.set.showWarning(shot.id==="directive-2" && line && (reduced || time>=line.in) ? line.text : "");
     this.ripple.apply(pose.ripple,time,energy,reduced);
     this.luma.apply(pose.luma,this.camera,pose.ripple?this.ripple.object.position:this.focus,
       reduced?"–":mouthAt(shot,time),time,reduced);

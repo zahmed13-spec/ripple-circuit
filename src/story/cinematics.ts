@@ -1,3 +1,4 @@
+import { characterContent, html } from "../content";
 import type { Save } from "../services/storage";
 import { motif } from "../services/audio";
 import { isStoryId, storyLink } from "./chapters";
@@ -9,6 +10,7 @@ import { Soundscape } from "./soundscape";
 
 export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySave, save:Save, storage?:Storage,
   stillCurrent:()=>boolean=()=>true) {
+  main.innerHTML = '<section class="story-page"><p role="status">Loading animated scene…</p><a href="#story-aero">Return to Aero Haven</a></section>';
   const cast=await loadCast();
   if(!stillCurrent()){
     if(cast)for(const resource of cast.resources)resource.dispose();
@@ -26,10 +28,10 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
   main.className=`story-screen ${options.largeText?"living-large-text":""}`;
   main.innerHTML=`<section class="story-page living-cinematic film-page ${isEco?"living-eco":""}">
     <div class="film-heading"><div><a href="#story-aero" class="story-back">← Aero Haven</a>
-    <p class="eyebrow">${film.chapter}</p><h1>${film.title}</h1></div>
+    <p class="eyebrow">${html(film.chapter)}</p><h1>${html(film.title)}</h1></div>
     <span>Animated story<br>Subtitles</span></div>
     <div class="film-frame">
-      <canvas role="img" aria-label="${film.title}, an original cel-shaded animated scene"></canvas>
+      <canvas role="img" aria-label="${html(film.title)}, an animated scene with ${html(characterContent.Luma.name)} and ${html(characterContent.Ripple.name)}"></canvas>
       <div class="film-preview-label" id="film-fallback" hidden>Animation unavailable. Read the scene below.</div>
       <div class="film-dip" aria-hidden="true"></div>
       <div class="film-lettering"><span id="shot-position"></span><strong id="shot-label"></strong></div>
@@ -44,10 +46,11 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
       <button type="button" id="story-scene-music" aria-pressed="${options.music}">${options.music?"Enable sound":"Music"}</button>
     </div>
     <div class="story-actions film-actions"><button type="button" class="primary" id="story-scene-skip">Skip scene</button>
-      <details><summary>Read transcript</summary><ol>${film.shots.map(shot=>`<li><strong>${shot.label}</strong>${shot.line?`<p><b>${shot.line.speaker}:</b> ${shot.line.text}</p>`:""}</li>`).join("")}</ol></details>
+      <details><summary>Read transcript</summary><ol>${film.shots.map(shot=>`<li><strong>${html(shot.label)}</strong>${shot.line?`<p><b>${html(shot.line.speaker)}:</b> ${html(shot.line.text)}</p>`:""}</li>`).join("")}</ol></details>
     </div></section>`;
   const $=<T extends HTMLElement>(id:string)=>main.querySelector<T>("#"+id)!;
   const canvas=main.querySelector("canvas")!;
+  const filmFrame=main.querySelector<HTMLElement>(".film-frame")!;
   const offsets:number[]=[];
   let runtime=0;
   for(const shot of film.shots){offsets.push(runtime);runtime+=shot.seconds;}
@@ -93,8 +96,12 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
       previous.disabled=at===0;
       force=true;
     }
-    const dipIn=within<.28 ? 1-within/.28 : 0;
-    const dipOut=shot.seconds-within<.20 ? 1-(shot.seconds-within)/.20 : 0;
+    const memoryCut=shot.effect==="memory" || film.shots[at-1]?.effect==="memory";
+    const fadeIn=at===0 || memoryCut ? .22 : 0;
+    const fadeOut=at===film.shots.length-1 ? .18 : 0;
+    const dipIn=within<fadeIn ? 1-within/fadeIn : 0;
+    const dipOut=shot.seconds-within<fadeOut ? 1-(shot.seconds-within)/fadeOut : 0;
+    dip.style.background=memoryCut ? "#e4faff" : "";
     dip.style.opacity=(!reduced()&&!paused?Math.max(dipIn,dipOut)*.7:0).toFixed(2);
     const spoken=shot.line;
     const caption=spoken&&((within>=spoken.in&&within<spoken.out)||paused&&reduced()||!renderer);
@@ -124,7 +131,15 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
   function setPaused(value:boolean) {
     paused=value;
     toggle.textContent=ended?"Replay":value?"Play":"Pause";
-    main.querySelector(".film-frame")!.setAttribute("data-paused",String(value));
+    filmFrame.dataset.paused=String(value);
+    if(value){
+      cancelAnimationFrame(frame);
+      frame=0;
+      soundscape.setActive(false);
+    } else if(!frame){
+      last=0;
+      frame=requestAnimationFrame(loop);
+    }
   }
   function changeTime(time:number) {
     elapsed=Math.min(runtime,Math.max(0,time));
@@ -164,7 +179,8 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
   };
   function loop(time:number) {
     if(disposed)return;
-    const dt=last?Math.min(.13,(time-last)/1000):0;
+    frame=0;
+    const dt=last?(time-last)/1000:0;
     last=time;
     const active=!document.hidden&&!document.querySelector("dialog[open]");
     if(renderer?.lost) {
@@ -178,25 +194,33 @@ export async function cinematic(main:HTMLElement, route:FilmRoute, story:StorySa
       if(elapsed-lastRender>=.031||elapsed===runtime)refresh();
       if(elapsed===runtime)end();
     }
-    frame=requestAnimationFrame(loop);
+    if(!paused)frame=requestAnimationFrame(loop);
   }
   const resize=()=>refresh(true);
+  const contextLost=()=>{fallback.hidden=false;setPaused(true);};
+  const contextRestored=()=>{fallback.hidden=true;refresh(true);};
+  canvas.addEventListener("webglcontextlost",contextLost);
+  canvas.addEventListener("webglcontextrestored",contextRestored);
   const motionChanged=()=>{
     if(reduced())setPaused(true);
     resize();
   };
   viewportMotion.addEventListener("change",motionChanged);
   window.addEventListener("resize",resize);
+  const resetClock=()=>{last=0;};
+  document.addEventListener("visibilitychange",resetClock);
   setPaused(paused);
   refresh(true);
-  frame=requestAnimationFrame(loop);
   return {
     pause(){setPaused(true);},
     dispose(){
       disposed=true;
       cancelAnimationFrame(frame);
       window.removeEventListener("resize",resize);
+      document.removeEventListener("visibilitychange",resetClock);
       viewportMotion.removeEventListener("change",motionChanged);
+      canvas.removeEventListener("webglcontextlost",contextLost);
+      canvas.removeEventListener("webglcontextrestored",contextRestored);
       renderer?.dispose();
       soundscape.dispose();
     },

@@ -1,6 +1,7 @@
 import {describe,expect,test} from "vitest";
 import {aftermath, films, sceneIds} from "../src/story/film/boards";
 import {mouthAt,poseAt, sample} from "../src/story/film/timeline";
+import {validateContent} from "../scripts/check-content";
 import {loadStory,markViewed} from "../src/story/save";
 
 describe("animated shot boards",()=>{
@@ -26,10 +27,24 @@ describe("animated shot boards",()=>{
     }
     expect(aftermath.map(route=>films[route].stage)).toEqual([1,2,3,4,5]);
   });
+  test("published film runtimes include all shots and transitions",()=>{
+    const ranges = [[30,40],[15,18],[15,18],[18,20],[18,20],[20,25],[18,20],[18,25]];
+    Object.values(films).forEach((film, index)=>{
+      const runtime = film.shots.reduce((seconds, shot)=>seconds+shot.seconds,0);
+      expect(runtime).toBeGreaterThanOrEqual(ranges[index][0]);
+      expect(runtime).toBeLessThanOrEqual(ranges[index][1]);
+    });
+    for(const route of aftermath){
+      expect(films[route].shots.reduce((seconds, shot)=>seconds+shot.seconds,0)).toBeLessThanOrEqual(20);
+    }
+  });
+  test("published CMS content resolves to the authored shots",()=>{
+    expect(validateContent()).toEqual({scenes:8,lines:32});
+  });
   test("a fracture dims the set and Luma changes position on a held camera",()=>{
     const fracture=films["story-intro"].shots[1];
     expect(poseAt(fracture,0).power).toBe(1);
-    expect(poseAt(fracture,12).power).toBe(0);
+    expect(poseAt(fracture,fracture.seconds).power).toBe(0);
     const survey=films["story-survey"].shots[1];
     expect(survey.lens).toHaveLength(1);
     expect(poseAt(survey,0).luma).not.toEqual(poseAt(survey,5).luma);
