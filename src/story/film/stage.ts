@@ -102,6 +102,7 @@ export class FilmStage {
     this.renderer.render(this.world,this.camera);
     this.canvas.dataset.renderMs=(performance.now()-renderStart).toFixed(2);
     this.canvas.dataset.renderFrame=String(++this.renderedFrames);
+    this.canvas.dataset.drawCalls=String(this.renderer.info.render.calls);
     this.canvas.dataset.luma=pose.luma[5];
     this.canvas.dataset.pose=pose.luma.slice(0,5).map(n=>Number(n).toFixed(3)).join(",");
     this.canvas.dataset.energy=energy.toFixed(2);

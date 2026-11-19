@@ -58,6 +58,7 @@ export class FilmSet {
     }));
     scene.add(new T.Mesh(own(new T.SphereGeometry(64,36,24)),this.sky));
     this.surface=own(new T.ShaderMaterial({
+      defines:low?{LOW_DETAIL:1}:{},
       uniforms:{clock:{value:0},energy:{value:1},plant:{value:eco?1:0}},
       vertexShader:`
         varying vec2 p;
@@ -66,8 +67,13 @@ export class FilmSet {
         varying vec2 p; uniform float clock, energy, plant;
         void main(){
           float broad=sin(p.x*.24+p.y*.28+sin(p.x*.14)-clock*.36);
-          float foam=smoothstep(.91,.99,sin(p.y*1.9 + sin(p.x*.45+clock*.3)*.7 -clock*1.35));
-          float mesh=smoothstep(.94,1.,sin(p.x*2.1 + p.y*.22 + clock*.57));
+          #ifdef LOW_DETAIL
+            float foam=smoothstep(.93,1.,sin(p.y*1.9-clock*1.35));
+            float mesh=.55;
+          #else
+            float foam=smoothstep(.91,.99,sin(p.y*1.9 + sin(p.x*.45+clock*.3)*.7 -clock*1.35));
+            float mesh=smoothstep(.94,1.,sin(p.x*2.1 + p.y*.22 + clock*.57));
+          #endif
           vec3 low=vec3(.06,.30,.48), high=vec3(.09,.63,.71);
           low=mix(low,vec3(.11,.33,.24),plant);
           high=mix(high,vec3(.32,.64,.31),plant);
@@ -255,6 +261,9 @@ export class FilmSet {
       this.wave.rotation.x=-Math.PI/2;
     }
 
+    const animated=new Set<T.Object3D|undefined>([this.growth,this.screen,this.warning?.mesh,...this.shutters]);
+    this.instanceBackdrop(scenery,animated);
+
     const lightGeometry=own(new T.IcosahedronGeometry(.106,0));
     const lightColor=fill(own,"#f8ffe3");
     const routes:readonly [readonly Vec3[],number,string][] = eco ? [
@@ -290,6 +299,30 @@ export class FilmSet {
     else for(let i=0;i<7;i++){
       const shard=part(jewel,i%3===0?nullEdge:nullGlass,[0,0,0],[.13,.65,.08],this.fracture);
       shard.userData.theta=i*Math.PI*2/8;
+    }
+  }
+
+  private instanceBackdrop(group:T.Group, animated:ReadonlySet<T.Object3D|undefined>) {
+    const batches=new Map<string,T.Mesh[]>();
+    for(const object of group.children){
+      if(!(object instanceof T.Mesh) || object.children.length || animated.has(object) ||
+        Array.isArray(object.material) || object.material.transparent)continue;
+      const key=object.geometry.id+":"+object.material.id;
+      const batch=batches.get(key);
+      if(batch)batch.push(object);
+      else batches.set(key,[object]);
+    }
+    for(const batch of batches.values()){
+      const [first]=batch;
+      if(batch.length<2)continue;
+      const meshes=this.own(new T.InstancedMesh(first.geometry,first.material,batch.length));
+      batch.forEach((mesh,index)=>{
+        mesh.updateMatrix();
+        meshes.setMatrixAt(index,mesh.matrix);
+      });
+      meshes.computeBoundingSphere();
+      group.remove(...batch);
+      group.add(meshes);
     }
   }
 
