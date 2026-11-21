@@ -50,6 +50,7 @@ export class StoryFeedback {
     this.inRun=false;
     this.arena.story?.setStage(this.story.stage());
     this.arena.story?.setPhase(0);
+    this.arena.story?.clearCelebration();
     this.arena.story?.react("curious",undefined,Infinity);
     this.line.textContent=this.story.level.version===4?circuits[this.story.level.id-1].before:this.story.level.narrative;
     this.status.textContent=this.story.level.version===4?milestones[this.story.stage()].name:`${this.story.stage()} of 5 circuits restored`;

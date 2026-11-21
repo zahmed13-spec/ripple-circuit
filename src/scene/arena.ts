@@ -153,13 +153,14 @@ export class Arena3D {
       ocean.position.y = -3.5;
       this.scene.add(ocean);
     }
+    if (!data.story) {
     const firstCloud = this.mesh(new T.SphereGeometry(1, 12, 8), "#f4fdff");
     for (let i = 0; i < 7; i++) {
       const cloud = i === 0 ? firstCloud : firstCloud.clone();
       cloud.scale.set(2.2, .35, 1);
       cloud.position.set((i - 3) * 7, -.8, -13 - Math.abs(i - 3));
-      if (data.story) cloud.userData.cloudX = cloud.position.x;
       this.scene.add(cloud);
+    }
     }
     this.preview = this.mesh(
       data.native
@@ -622,7 +623,7 @@ export class Arena3D {
       !this.dirty &&
       !this.waves.length &&
       !this.targetCamera &&
-      now - this.lastDraw < 150
+      now - this.lastDraw < (this.story && !reduced ? (this.quality==="low" ? 32 : 16) : 150)
     )
       return;
 

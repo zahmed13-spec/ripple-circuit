@@ -1,4 +1,5 @@
-import { Biome } from "../scene/biome";
+import { Panorama } from "../scene/scenery/panorama";
+import type { ScenicWorld } from "../scene/scenery/compositions";
 import * as T from "three";
 import type { Current } from "../native/physics";
 import type { Arena3D } from "../scene/arena";
@@ -22,18 +23,18 @@ export class StoryEnvironment {
   private scenery?: AeroScenery;
   private phase = 0;
   private landmarks?: Landmarks;
-  private biome?: Biome;
+  private panorama: Panorama;
   private time = 0;
   private stage = -1;
   private signal = "";
   private lastActive = "";
   private ocean: T.ShaderMaterial;
-  private clouds: T.Object3D[];
+
 
   constructor(private arena: Arena3D, private spec: Environment) {
     const { theme } = spec;
     const { scene } = arena;
-    this.clouds=scene.children.filter(object=>typeof object.userData.cloudX==="number");
+
     const decor = new T.Group();
     scene.add(decor);
     arena.renderer.setClearColor(theme.sky);
@@ -41,7 +42,7 @@ export class StoryEnvironment {
     arena.sun.color.set(theme.sunlight);
     this.ocean = arena.own(new T.ShaderMaterial({
       uniforms:{
-        tint:{value:new T.Color(theme.surface)},sky:{value:new T.Color(theme.sky)},time:{value:0},energy:{value:0},detail:{value:1},
+        ground:{value:theme.id==="terra"?1:theme.id==="metro"?2:theme.id==="null"?3:0},tint:{value:new T.Color(theme.surface)},sky:{value:new T.Color(theme.sky)},time:{value:0},energy:{value:0},detail:{value:1},
       },
       vertexShader:`
         varying vec2 sea;
@@ -52,13 +53,24 @@ export class StoryEnvironment {
       fragmentShader:`
         varying vec2 sea;
         uniform vec3 tint, sky;
-        uniform float time, energy, detail;
+        uniform float time, energy, detail, ground;
         void main() {
           float wave=sin(sea.y * 1.45 + sin(sea.x * .37) - time * .8);
           float gleam=smoothstep(.89,1.,wave);
           float tide=.5+.5*sin(sea.x*.18 + sea.y*.16 -time*.25);
           vec3 seaColor=mix(tint*.47,tint*1.3,tide);
           seaColor=mix(seaColor,vec3(.65,.94,.92),gleam*(.035+energy*.075));
+          if(ground==1.) {
+            float layers=sin(sea.x*.39+sea.y*.83+sin(sea.x*.28)*2.);
+            seaColor=mix(tint*.38,tint*.92,.52+.28*layers);
+          } else if(ground==2.) {
+            float avenues=smoothstep(.91,1.,cos(sea.x*.63)*cos(sea.y*.73));
+            seaColor=mix(tint*.54,tint*.95,tide)+avenues*.16;
+          } else if(ground==3.) {
+            float fault=sin(sea.x*.6+sea.y*.73+sin(sea.y*.55+time*.09)*2.2);
+            seaColor=mix(tint*.32,tint*1.2,.54+.31*fault);
+            seaColor+=vec3(.16,.07,.14)*smoothstep(.96,1.,fault)*(.3+energy*.45);
+          }
           seaColor+=detail*.055*smoothstep(.91,1.,sin(sea.x*.65+sea.y*.7+time*.5));
           gl_FragColor=vec4(mix(seaColor,sky,smoothstep(17.,26.,length(sea))),1.);
           #include <colorspace_fragment>
@@ -69,7 +81,7 @@ export class StoryEnvironment {
     water.position.y=-3.36;
     decor.add(water);
     if(theme.id==="aero")this.landmarks=new Landmarks(arena,decor,theme);
-    this.biome=new Biome(arena,theme.id as ConstructorParameters<typeof Biome>[1],spec.level??1);
+    this.panorama=new Panorama(arena,theme.id as ScenicWorld,spec.level??1);
     if (theme.id === "aero" && spec.level) {
       this.scenery = new AeroScenery(arena, decor, spec.level);
     }
@@ -130,7 +142,7 @@ export class StoryEnvironment {
     this.signal=signal;
     this.landmarks?.set(stage,signal);
     this.scenery?.setPower(stage,this.phase);
-    this.biome?.power(stage,this.phase);
+    this.panorama.power(stage,this.phase);
     this.arena.canvas.dataset.stage=String(stage);
     this.arena.canvas.dataset.restored=String(stage===5);
     this.arena.canvas.dataset.signal=signal;
@@ -141,7 +153,7 @@ export class StoryEnvironment {
     this.phase = phase;
     this.landmarks?.setPhase(phase);
     this.scenery?.setPower(this.stage,phase);
-    this.biome?.power(this.stage,phase);
+    this.panorama.power(this.stage,phase);
     this.arena.dirty = true;
   }
 
@@ -151,6 +163,9 @@ export class StoryEnvironment {
 
   placeLuma(position?:readonly [number,number,number]) { this.luma.place(position); }
 
+  clearCelebration(){this.panorama.clear();}
+  celebrate(position:T.Vector3){this.panorama.celebrate(position);this.arena.dirty=true;}
+
   animate(dt:number,reduced:boolean) {
     if(!reduced)this.time+=dt;
     const low=this.arena.quality==="low";
@@ -159,10 +174,7 @@ export class StoryEnvironment {
     this.ocean.uniforms.detail.value=low?0:1;
     this.landmarks?.animate(dt,this.time,reduced,low);
     this.scenery?.animate(this.time,reduced,this.arena.quality);
-    this.biome?.animate(this.time,reduced,this.arena.quality);
-    this.clouds.forEach((cloud,index)=>{
-      cloud.position.x=cloud.userData.cloudX+(reduced||low?0:Math.sin(this.time*.09+index)*.64);
-    });
+    this.panorama.update(dt,reduced,this.arena.quality);
     this.luma.animate(dt,reduced,this.stage);
     for (const {arrows,spec} of this.streams) {
       for (const arrow of arrows.children) {

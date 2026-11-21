@@ -373,6 +373,8 @@ export async function mountNative(
           const previousStage=story.stage();
           newBest=story.record(score);
           feedback?.finish(true,story.stage()>previousStage);
+          const receiver = l!.goals.at(-1);
+          if(receiver)scene.story?.celebrate(new Vector3(receiver.x,receiver.y,receiver.z));
         } else {
           newBest = record(save,code,score,code.startsWith("c3") ? l!.id : undefined);
           if (!persist(save, storage))
@@ -464,7 +466,7 @@ export async function mountNative(
       scene.update(position, sim.opened, sim.activated, sim.liftHeights);
       scene.draw(
         dt,
-        save.settings.reduced || (story!==undefined && reducedMotion.matches),
+        save.settings.reduced || (story!==undefined && (reducedMotion.matches || sim.paused)),
         !sim.started || sim.paused || sim.status !== "playing",
       );
       hud();
